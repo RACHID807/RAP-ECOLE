@@ -1,0 +1,96 @@
+{% extends 'espace_candidat/base_candidat.html' %}
+
+{% block candidat_content %}
+<!--
+  Vue d'ensemble du tableau de bord candidat.
+  Synthèse de vote, duel actif et suivi de candidature.
+-->
+<div class="space-y-6">
+
+  <!-- Message d'accueil officiel -->
+  <div class="carte-blanche p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">Bienvenue sur votre espace, {{ candidat.prenom }}</h1>
+      <p class="text-xs text-gray-600 mt-1">
+        Représentant du <strong>{{ candidat.etablissement.nom }}</strong> ({{ candidat.commune }}, {{ candidat.ville }})
+      </p>
+    </div>
+    <span class="text-xs font-semibold px-3 py-1 rounded bg-ci-50 text-ci-800 border border-ci-200 self-start sm:self-auto">
+      Dossier validé par le jury
+    </span>
+  </div>
+
+  <!-- Indicateurs statistiques du candidat -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-white p-5 rounded-lg border border-gray-200">
+      <span class="text-xs text-gray-500 font-medium uppercase block mb-1">Total des voix</span>
+      <span class="text-2xl font-black text-ci-700">{{ candidat.votes }}</span>
+    </div>
+    <div class="bg-white p-5 rounded-lg border border-gray-200">
+      <span class="text-xs text-gray-500 font-medium uppercase block mb-1">Rang général</span>
+      <span class="text-2xl font-black text-gray-900">#{{ candidat.rang }}</span>
+    </div>
+    <div class="bg-white p-5 rounded-lg border border-gray-200">
+      <span class="text-xs text-gray-500 font-medium uppercase block mb-1">Duels remportés</span>
+      <span class="text-2xl font-black text-ci-700">{{ candidat.stats.duels_gagnes }}</span>
+    </div>
+    <div class="bg-white p-5 rounded-lg border border-gray-200">
+      <span class="text-xs text-gray-500 font-medium uppercase block mb-1">Taux de succès</span>
+      <span class="text-2xl font-black text-gray-900">{{ candidat.stats.taux_victoire }}%</span>
+    </div>
+  </div>
+
+  <!-- Confrontation en cours -->
+  <div class="carte-blanche p-6 bg-white">
+    <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+      Votre confrontation actuelle
+    </h2>
+
+    {% for d in duels %}
+      {% if d.statut == 'en_cours' %}
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-ci-800 bg-ci-100 px-2.5 py-0.5 rounded">
+            {{ d.phase }}
+          </span>
+          <h3 class="text-base font-bold text-gray-900 mt-2">{{ d.titre }}</h3>
+          <p class="text-xs text-gray-500 mt-1">Clôture des votes dans : {{ d.temps_restant }}</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-right text-xs">
+            <div class="font-bold text-ci-700 text-sm">{{ d.votes1 }} vs {{ d.votes2 }}</div>
+            <div class="text-gray-500">Voix actuelles</div>
+          </div>
+          <a href="{% url 'duel_detail' d.id %}" class="btn-vert text-xs py-2 px-4">
+            Consulter le duel en direct
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    {% empty %}
+      <p class="text-xs text-gray-500 py-3">Aucune confrontation active à ce jour.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Dernières communications officielles -->
+  <div class="carte-blanche p-6 bg-white">
+    <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+      Dernières informations du comité
+    </h2>
+
+    <div class="space-y-3">
+      {% for n in notifications %}
+      <div class="p-4 bg-gray-50 rounded border border-gray-200">
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-bold text-gray-900 text-xs">{{ n.titre }}</span>
+          <span class="text-[11px] text-gray-500">{{ n.date }}</span>
+        </div>
+        <p class="text-xs text-gray-600 leading-relaxed">{{ n.contenu }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

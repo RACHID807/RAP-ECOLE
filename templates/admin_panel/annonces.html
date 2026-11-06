@@ -1,0 +1,28 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block admin_page_title %}Annonces{% endblock %}
+{% block admin_content %}
+<div class="flex justify-between items-center mb-6">
+  <h3 class="font-display font-bold text-xl text-white">📢 Annonces & Actualités</h3>
+  <button onclick="alert('Créer une annonce [SIMULATION]')" class="btn-primary text-sm" style="padding:.6rem 1.2rem">➕ Nouvelle annonce</button>
+</div>
+<div class="space-y-4">
+  {% for a in annonces %}
+  <div class="card p-5 flex items-start gap-4">
+    <span class="text-2xl mt-0.5">{% if a.type == 'important' %}🔔{% elif a.type == 'info' %}ℹ️{% else %}📢{% endif %}</span>
+    <div class="flex-1">
+      <div class="font-semibold text-white mb-1">{{ a.titre }}</div>
+      <div class="text-gray-400 text-sm mb-2">{{ a.contenu }}</div>
+      <div class="flex items-center gap-3 text-xs text-gray-600">
+        <span>📅 {{ a.date }}</span>
+        <span class="badge {% if a.lu %}bg-dark-600 border-dark-400 text-gray-500{% else %}bg-brand-900/50 border-brand-700/50 text-brand-400{% endif %}">{% if a.lu %}Lu{% else %}Non lu{% endif %}</span>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="alert('Modifier [SIMULATION]')" class="p-2 rounded text-yellow-400 hover:bg-yellow-900/20 text-sm">✏️</button>
+      <button onclick="confirm('Supprimer cette annonce ? [SIMULATION]')" class="p-2 rounded text-red-400 hover:bg-red-900/20 text-sm">🗑️</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+

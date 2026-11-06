@@ -1,0 +1,57 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block admin_page_title %}Paramètres{% endblock %}
+{% block admin_content %}
+<div class="max-w-2xl space-y-6">
+  <div class="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/40 text-yellow-400 text-xs mb-4">⚠️ SIMULATION — Paramètres non fonctionnels. Backend à connecter.</div>
+
+  <div class="card p-6">
+    <h3 class="font-display font-bold text-white mb-4">🏆 Paramètres de la compétition</h3>
+    <div class="space-y-4">
+      <div><label class="text-gray-300 text-sm mb-1 block">Nom de la compétition</label><input type="text" value="RAP ÉCOLE 2026" class="input"/></div>
+      <div><label class="text-gray-300 text-sm mb-1 block">Slogan</label><input type="text" value="Le championnat de rap inter-établissements" class="input"/></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-gray-300 text-sm mb-1 block">Date de début</label><input type="date" value="2026-10-01" class="input"/></div>
+        <div><label class="text-gray-300 text-sm mb-1 block">Date de fin</label><input type="date" value="2026-11-25" class="input"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="font-display font-bold text-white mb-4">🗳️ Paramètres de vote</h3>
+    <div class="space-y-4">
+      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
+        <div><div class="text-white font-medium text-sm">Vote gratuit actif</div><div class="text-gray-400 text-xs">Autoriser les votes gratuits</div></div>
+        <div x-data="{on:true}" @click="on=!on" :class="on ? 'bg-brand-600' : 'bg-dark-500'" class="w-11 h-6 rounded-full relative cursor-pointer transition-colors">
+          <div :class="on ? 'translate-x-5' : 'translate-x-0'" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
+        <div><div class="text-white font-medium text-sm">Vote premium actif</div><div class="text-gray-400 text-xs">Autoriser les votes payants</div></div>
+        <div x-data="{on:true}" @click="on=!on" :class="on ? 'bg-brand-600' : 'bg-dark-500'" class="w-11 h-6 rounded-full relative cursor-pointer transition-colors">
+          <div :class="on ? 'translate-x-5' : 'translate-x-0'" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="font-display font-bold text-white mb-4">📅 Phases de compétition</h3>
+    <div class="space-y-2">
+      {% for phase in phases %}
+      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
+        <div>
+          <div class="text-white font-medium text-sm">{{ phase.nom }}</div>
+          <div class="text-gray-500 text-xs">{{ phase.date }}</div>
+        </div>
+        <span class="badge text-xs {% if phase.statut == 'en_cours' %}bg-brand-900/50 border-brand-700/50 text-brand-400{% elif phase.statut == 'termine' %}bg-green-900/40 border-green-700/50 text-green-400{% else %}bg-dark-500 border-dark-400 text-gray-500{% endif %}">
+          {% if phase.statut == 'en_cours' %}▶ En cours{% elif phase.statut == 'termine' %}✓ Terminée{% else %}À venir{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <button onclick="alert('Paramètres enregistrés [SIMULATION]')" class="btn-primary">💾 Enregistrer les paramètres [DÉMO]</button>
+</div>
+{% endblock %}
+

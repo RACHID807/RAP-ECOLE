@@ -1,0 +1,23 @@
+# Environnements virtuels et caches Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Base de données locale de test
+db.sqlite3
+db.sqlite3-journal
+
+# Fichiers médias téléversés localement
+/media/
+
+# Fichiers statiques collectés
+/staticfiles/
+
+# Fichiers de configuration des éditeurs
+.vscode/
+.idea/
+*.swp
+

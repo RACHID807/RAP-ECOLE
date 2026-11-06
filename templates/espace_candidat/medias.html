@@ -1,0 +1,36 @@
+{% extends 'espace_candidat/base_candidat.html' %}
+{% block page_title %}Mes Médias{% endblock %}
+{% block candidat_content %}
+<div class="max-w-3xl">
+  <div class="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/40 text-yellow-400 text-xs mb-6">⚠️ SIMULATION — Les uploads ne fonctionnent pas réellement.</div>
+  <div class="space-y-6">
+    {% for media in medias %}
+    <div class="card p-5 flex items-center gap-5">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl bg-dark-600 flex-shrink-0">
+        {% if media.type == 'audio' %}🎵{% else %}🎬{% endif %}
+      </div>
+      <div class="flex-1">
+        <div class="font-semibold text-white mb-1">{{ media.titre }}</div>
+        <div class="flex items-center gap-3 text-xs text-gray-400">
+          <span>⏱ {{ media.duree }}</span>
+          <span>📅 {{ media.date }}</span>
+          <span>👁 {{ media.ecoutes }} écoutes</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="badge {% if media.statut == 'approuve' %}bg-green-900/40 border-green-700/50 text-green-400{% elif media.statut == 'en_attente' %}bg-yellow-900/40 border-yellow-700/50 text-yellow-400{% else %}bg-red-900/40 border-red-700/50 text-red-400{% endif %}">
+          {% if media.statut == 'approuve' %}✅ Approuvé{% elif media.statut == 'en_attente' %}⏳ En attente{% else %}❌ Refusé{% endif %}
+        </span>
+        <button class="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-900/20 transition-colors text-sm" onclick="alert('Supprimer [SIMULATION]')">🗑️</button>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="card p-6 border-2 border-dashed border-dark-400 hover:border-brand-700 transition-colors cursor-pointer text-center" onclick="alert('Upload de media [SIMULATION]')">
+      <div class="text-4xl mb-2">➕</div>
+      <div class="font-semibold text-white mb-1">Ajouter un média</div>
+      <div class="text-gray-400 text-sm">Audio (MP3) ou Vidéo (MP4)</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

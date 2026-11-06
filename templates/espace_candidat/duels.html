@@ -1,0 +1,47 @@
+{% extends 'espace_candidat/base_candidat.html' %}
+{% block page_title %}Mes Duels{% endblock %}
+{% block candidat_content %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="card p-4 text-center"><div class="font-display font-black text-2xl text-white">{{ duels|length }}</div><div class="text-gray-400 text-xs">Total duels</div></div>
+  <div class="card p-4 text-center"><div class="font-display font-black text-2xl text-green-400">{{ candidat.stats.duels_gagnes }}</div><div class="text-gray-400 text-xs">Victoires</div></div>
+  <div class="card p-4 text-center"><div class="font-display font-black text-2xl text-red-400">{{ candidat.stats.duels_perdus }}</div><div class="text-gray-400 text-xs">Défaites</div></div>
+  <div class="card p-4 text-center"><div class="font-display font-black text-2xl text-gold-400">{{ candidat.stats.taux_victoire }}%</div><div class="text-gray-400 text-xs">Taux victoire</div></div>
+</div>
+<div class="card overflow-hidden">
+  <div class="p-5 border-b border-dark-500"><h3 class="font-display font-bold text-white">Historique des duels</h3></div>
+  <div class="divide-y divide-dark-600">
+    {% for d in duels %}
+    <div class="p-5 flex items-center gap-4 hover:bg-dark-600/30 transition-colors">
+      <div class="flex items-center gap-3 flex-1">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white"
+             style="background:linear-gradient(135deg,{% if d.candidat1_id == candidat.id %}{{ d.candidat2.couleur }}{% else %}{{ d.candidat1.couleur }}{% endif %},#80808044)">
+          {% if d.candidat1_id == candidat.id %}{{ d.candidat2.avatar_initiales }}{% else %}{{ d.candidat1.avatar_initiales }}{% endif %}
+        </div>
+        <div>
+          <div class="font-semibold text-white text-sm">
+            vs {% if d.candidat1_id == candidat.id %}{{ d.candidat2.nom_artistique }}{% else %}{{ d.candidat1.nom_artistique }}{% endif %}
+          </div>
+          <div class="text-gray-500 text-xs">{{ d.phase }} · {{ d.date_debut }}</div>
+        </div>
+      </div>
+      <div class="text-sm text-gray-400 hidden md:block">
+        {% if d.candidat1_id == candidat.id %}{{ d.votes1 }} vs {{ d.votes2 }}{% else %}{{ d.votes2 }} vs {{ d.votes1 }}{% endif %}
+      </div>
+      <div>
+        {% if d.statut == 'en_cours' %}
+        <span class="badge bg-brand-900/50 border-brand-700/50 text-brand-400 animate-pulse">🔴 En cours</span>
+        {% elif d.gagnant_id == candidat.id %}
+        <span class="badge bg-green-900/40 border-green-700/50 text-green-400">✅ Victoire</span>
+        {% else %}
+        <span class="badge bg-red-900/40 border-red-700/50 text-red-400">❌ Défaite</span>
+        {% endif %}
+      </div>
+      <a href="{% url 'duel_detail' d.id %}" class="text-brand-400 hover:text-brand-300 text-sm transition-colors">→</a>
+    </div>
+    {% empty %}
+    <div class="text-center py-10 text-gray-500">⚔️ Aucun duel enregistré.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

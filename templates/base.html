@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}RAP ÉCOLE — Championnat National Inter-Établissements (Côte d'Ivoire){% endblock %}</title>
+
+  <!-- Intégration Tailwind CSS avec palette naturelle Vert & Blanc (Identité Ivoirienne) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // Nuances de vert (naturel, élégant, institutionnel)
+            ci: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#052e16',
+            },
+            // Touche orangée discrète pour les rappels de la Côte d'Ivoire
+            ivoire: {
+              orange: '#ea580c',
+              light: '#fff7ed',
+            }
+          },
+          fontFamily: {
+            sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Typographie propre et lisible -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- Alpine.js pour la réactivité simple (menus, filtres, modales) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    /* Boutons standards dans le thème vert & blanc */
+    .btn-vert {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      background-color: #15803d;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-vert:hover {
+      background-color: #166534;
+    }
+    .btn-blanc {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      background-color: #ffffff;
+      color: #15803d;
+      border: 1.5px solid #15803d;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-blanc:hover {
+      background-color: #f0fdf4;
+    }
+    /* Cartes blanches épurées avec bordures légères */
+    .carte-blanche {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .carte-blanche:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- ========================================================================= -->
+  <!-- BARRE DE NAVIGATION (NAVBAR ÉPURÉE BLANC & VERT)                           -->
+  <!-- ========================================================================= -->
+  <header x-data="{ mobileMenu: false }" class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+
+        <!-- Logo et identité du projet -->
+        <a href="{% url 'home' %}" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-ci-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            RE
+          </div>
+          <div>
+            <div class="font-extrabold text-xl tracking-tight text-gray-900">
+              RAP <span class="text-ci-700">ÉCOLE</span>
+            </div>
+            <div class="text-xs text-gray-500 font-medium">Championnat Inter-Établissements · Côte d'Ivoire</div>
+          </div>
+        </a>
+
+        <!-- Liens principaux (ordinateur) -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-700">
+          <a href="{% url 'home' %}" class="hover:text-ci-700 transition-colors">Accueil</a>
+          <a href="{% url 'candidats' %}" class="hover:text-ci-700 transition-colors">Candidats</a>
+          <a href="{% url 'duels' %}" class="hover:text-ci-700 transition-colors">Confrontations</a>
+          <a href="{% url 'classement' %}" class="hover:text-ci-700 transition-colors">Classement</a>
+        </nav>
+
+        <!-- Actions droites (Espace candidat & Connexion) -->
+        <div class="hidden md:flex items-center gap-3">
+          <a href="{% url 'espace_candidat' %}" class="btn-blanc text-sm">
+            Espace Candidat
+          </a>
+          <a href="{% url 'connexion' %}" class="btn-vert text-sm">
+            Connexion
+          </a>
+        </div>
+
+        <!-- Bouton menu mobile -->
+        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-gray-600 hover:text-gray-900">
+          <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg x-show="mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Menu déroulant pour smartphone -->
+      <div x-show="mobileMenu" x-transition class="md:hidden py-4 border-t border-gray-100 space-y-2">
+        <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-50 hover:text-ci-700">Accueil</a>
+        <a href="{% url 'candidats' %}" class="block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-50 hover:text-ci-700">Candidats</a>
+        <a href="{% url 'duels' %}" class="block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-50 hover:text-ci-700">Confrontations</a>
+        <a href="{% url 'classement' %}" class="block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-50 hover:text-ci-700">Classement</a>
+        <div class="pt-3 border-t border-gray-100 flex flex-col gap-2">
+          <a href="{% url 'espace_candidat' %}" class="btn-blanc w-full text-center text-sm">Espace Candidat</a>
+          <a href="{% url 'connexion' %}" class="btn-vert w-full text-center text-sm">Connexion</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- ZONE DE CONTENU PRINCIPAL                                                 -->
+  <!-- ========================================================================= -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- PIED DE PAGE (SOBRE & INSTITUTIONNEL)                                     -->
+  <!-- ========================================================================= -->
+  <footer class="bg-white border-t border-gray-200 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+        <!-- Colonne 1 : Présentation -->
+        <div class="md:col-span-1">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded bg-ci-700 flex items-center justify-center text-white font-bold text-sm">RE</div>
+            <span class="font-bold text-lg text-gray-900">RAP ÉCOLE</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Plateforme officielle de valorisation de l'expression poétique, musicale et citoyenne en milieu scolaire et universitaire en Côte d'Ivoire.
+          </p>
+        </div>
+
+        <!-- Colonne 2 : Liens de navigation -->
+        <div>
+          <h3 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">Navigation</h3>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="{% url 'home' %}" class="hover:text-ci-700">Accueil</a></li>
+            <li><a href="{% url 'candidats' %}" class="hover:text-ci-700">Tous les Candidats</a></li>
+            <li><a href="{% url 'duels' %}" class="hover:text-ci-700">Confrontations en direct</a></li>
+            <li><a href="{% url 'classement' %}" class="hover:text-ci-700">Tableau des classements</a></li>
+            <li><a href="{% url 'inscription' %}" class="hover:text-ci-700">Inscrire un établissement</a></li>
+          </ul>
+        </div>
+
+        <!-- Colonne 3 : Niveaux académiques -->
+        <div>
+          <h3 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">Catégories</h3>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><span class="font-medium text-gray-800">Collèges</span> (6ème à la 3ème)</li>
+            <li><span class="font-medium text-gray-800">Lycées</span> (2nde à la Terminale)</li>
+            <li><span class="font-medium text-gray-800">Universités & Grandes Écoles</span></li>
+            <li class="pt-2 text-xs text-gray-500">Abidjan, Yamoussoukro et villes participantes</li>
+          </ul>
+        </div>
+
+        <!-- Colonne 4 : Organisation & Contact -->
+        <div>
+          <h3 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">Comité d'Organisation</h3>
+          <p class="text-sm text-gray-600 mb-2">Abidjan, République de Côte d'Ivoire</p>
+          <p class="text-sm text-gray-600 mb-2">Courriel : contact@rapecole.ci</p>
+          <div class="mt-4 p-3 rounded-md bg-ci-50 border border-ci-100 text-xs text-ci-800">
+            <strong>Projet Frontend Django</strong><br/>
+            Architecture préparée pour le branchement avec Django REST Framework.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="border-t border-gray-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+        <p>© 2026 RAP ÉCOLE — Championnat National Inter-Établissements. Tous droits réservés.</p>
+        <p>République de Côte d'Ivoire · Union - Discipline - Travail</p>
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

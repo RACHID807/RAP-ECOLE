@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% block title %}Espace de Vote — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Page de vote et d'attribution de voix pour un candidat spécifique.
+  Deux modes distincts :
+    1. Vote gratuit après écoute de l'extrait
+    2. Contribution de soutien par packs (Mobile Money CI)
+  L'ensemble fonctionne de manière réactive via Alpine.js sans requêtes externes.
+-->
+<div class="py-12 bg-gray-50 min-h-screen" x-data="{
+  modeVote: 'gratuit',
+  voteGratuitEffectue: false,
+  packSelectionne: null,
+  etapePaiement: 'choix',
+  operateur: 'wave',
+  numeroTelephone: '',
+  validerVoteGratuit() {
+    this.voteGratuitEffectue = true;
+  },
+  ouvrirPaiement(nomPack, montant) {
+    this.packSelectionne = { nom: nomPack, montant: montant };
+    this.etapePaiement = 'formulaire';
+  },
+  confirmerPaiement() {
+    if (!this.numeroTelephone) {
+      alert('Veuillez saisir votre numéro de compte Mobile Money.');
+      return;
+    }
+    this.etapePaiement = 'succes';
+  }
+}">
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Fil d'Ariane -->
+    <nav class="text-xs text-gray-500 mb-6 flex items-center gap-1.5">
+      <a href="{% url 'home' %}" class="hover:text-ci-700">Accueil</a>
+      <span>/</span>
+      <a href="{% url 'candidats' %}" class="hover:text-ci-700">Candidats</a>
+      <span>/</span>
+      <a href="{% url 'candidat_detail' candidat.id %}" class="hover:text-ci-700">{{ candidat.nom_artistique }}</a>
+      <span>/</span>
+      <span class="text-gray-900 font-semibold">Vote</span>
+    </nav>
+
+    <!-- Fiche récapitulative du candidat choisi -->
+    <div class="carte-blanche p-6 bg-white mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <span class="text-xs font-bold text-ci-800 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">
+          Candidat #{{ candidat.id }}
+        </span>
+        <h1 class="text-2xl font-bold text-gray-900 mt-1">{{ candidat.nom_artistique }}</h1>
+        <p class="text-xs text-gray-600">
+          {{ candidat.etablissement.nom }} · {{ candidat.commune }} ({{ candidat.ville }})
+        </p>
+      </div>
+
+      <div class="text-left sm:text-right">
+        <span class="text-xs text-gray-500 block">Total actuel des voix</span>
+        <span class="text-2xl font-extrabold text-ci-700">{{ candidat.votes }}</span>
+      </div>
+    </div>
+
+    <!-- Onglets de sélection du mode de vote -->
+    <div class="flex border-b border-gray-200 mb-8">
+      <button
+        type="button"
+        @click="modeVote = 'gratuit'"
+        :class="modeVote === 'gratuit' ? 'border-ci-700 text-ci-700 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700'"
+        class="py-3 px-6 border-b-2 text-sm transition-colors"
+      >
+        Vote Quotidien Gratuit
+      </button>
+      <button
+        type="button"
+        @click="modeVote = 'pack'"
+        :class="modeVote === 'pack' ? 'border-ci-700 text-ci-700 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700'"
+        class="py-3 px-6 border-b-2 text-sm transition-colors"
+      >
+        Packs de Soutien (Mobile Money CI)
+      </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 1. SECTION VOTE GRATUIT                                               -->
+    <!-- ===================================================================== -->
+    <div x-show="modeVote === 'gratuit'" x-transition class="space-y-6">
+      <div class="carte-blanche p-8 bg-white text-center max-w-xl mx-auto">
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Écouter et soutenir</h2>
+        <p class="text-xs text-gray-600 mb-6 leading-relaxed">
+          Le règlement autorise un vote gratuit par personne et par jour. Écoutez l'extrait de <strong>{{ candidat.nom_artistique }}</strong> puis validez votre voix.
+        </p>
+
+        <!-- Lecteur d'écoute préalable -->
+        <div class="bg-gray-50 border border-gray-200 rounded p-4 mb-6 text-left">
+          <div class="text-xs font-semibold text-gray-900 mb-1">Titre : « {{ candidat.audio_titre }} »</div>
+          <div class="text-xs text-gray-500 mb-3">Enregistrement scolaire officiel</div>
+          <div class="w-full bg-gray-200 h-1.5 rounded-full">
+            <div class="bg-ci-600 h-full w-2/3"></div>
+          </div>
+        </div>
+
+        <!-- Bouton d'action de vote gratuit -->
+        <div x-show="!voteGratuitEffectue">
+          <button
+            type="button"
+            @click="validerVoteGratuit()"
+            class="btn-vert w-full py-3 text-sm"
+          >
+            Confirmer mon vote pour {{ candidat.nom_artistique }}
+          </button>
+          <p class="text-[11px] text-gray-400 mt-2">1 vote gratuit / 24 heures</p>
+        </div>
+
+        <!-- Message de succès après confirmation -->
+        <div x-show="voteGratuitEffectue" x-transition class="p-4 bg-ci-50 border border-ci-200 rounded text-center">
+          <div class="text-ci-800 font-bold text-sm mb-1">Merci pour votre participation !</div>
+          <p class="text-xs text-ci-700 mb-4">
+            Votre voix a bien été attribuée à {{ candidat.nom_artistique }} pour le compte du {{ candidat.etablissement.nom }}.
+          </p>
+          <a href="{% url 'classement' %}" class="btn-blanc text-xs py-2">
+            Consulter le classement général
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 2. SECTION PACKS DE SOUTIEN (MOBILE MONEY CÔTE D'IVOIRE)               -->
+    <!-- ===================================================================== -->
+    <div x-show="modeVote === 'pack'" x-transition class="space-y-6">
+
+      <!-- Liste des formules d'encouragement -->
+      <div x-show="etapePaiement === 'choix'">
+        <div class="text-center max-w-xl mx-auto mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mb-2">Formules d'encouragement</h2>
+          <p class="text-xs text-gray-600">
+            Paiement direct sécurisé via Wave, Orange Money, MTN MoMo ou Moov Money Côte d'Ivoire.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {% for pack in vote_packages %}
+          <div class="carte-blanche p-6 bg-white flex flex-col justify-between {% if pack.populaire %}border-ci-600 ring-1 ring-ci-600{% endif %}">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-gray-900 text-base">{{ pack.nom }}</h3>
+                {% if pack.populaire %}
+                <span class="text-[10px] font-bold uppercase bg-ci-100 text-ci-800 px-2 py-0.5 rounded">Recommandé</span>
+                {% endif %}
+              </div>
+
+              <div class="text-2xl font-black text-ci-700 mb-1">
+                {{ pack.prix }} <span class="text-sm font-semibold text-gray-600">{{ pack.devise }}</span>
+              </div>
+              <div class="text-xs font-bold text-gray-900 mb-4">+{{ pack.votes }} voix directes</div>
+
+              <ul class="text-xs text-gray-600 space-y-2 mb-6">
+                {% for av in pack.avantages %}
+                <li class="flex items-start gap-1.5">
+                  <span class="text-ci-700 font-bold">•</span>
+                  <span>{{ av }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <button
+              type="button"
+              @click="ouvrirPaiement('{{ pack.nom }}', '{{ pack.prix }}')"
+              class="btn-vert w-full text-xs py-2.5"
+            >
+              Choisir cette formule
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Formulaire de simulation de paiement Mobile Money CI -->
+      <div x-show="etapePaiement === 'formulaire'" x-transition class="carte-blanche p-8 bg-white max-w-md mx-auto">
+        <h3 class="text-lg font-bold text-gray-900 mb-1">Règlement de la contribution</h3>
+        <p class="text-xs text-gray-500 mb-5">
+          Formule : <strong x-text="packSelectionne?.nom"></strong> (<span x-text="packSelectionne?.montant"></span> FCFA)
+        </p>
+
+        <!-- Sélection de l'opérateur local -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-2">Opérateur en Côte d'Ivoire</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              @click="operateur = 'wave'"
+              :class="operateur === 'wave' ? 'border-ci-700 bg-ci-50 text-ci-800 font-bold' : 'border-gray-200 text-gray-700'"
+              class="p-2.5 rounded border text-center transition-colors"
+            >
+              Wave CI
+            </button>
+            <button
+              type="button"
+              @click="operateur = 'orange'"
+              :class="operateur === 'orange' ? 'border-ci-700 bg-ci-50 text-ci-800 font-bold' : 'border-gray-200 text-gray-700'"
+              class="p-2.5 rounded border text-center transition-colors"
+            >
+              Orange Money CI
+            </button>
+            <button
+              type="button"
+              @click="operateur = 'mtn'"
+              :class="operateur === 'mtn' ? 'border-ci-700 bg-ci-50 text-ci-800 font-bold' : 'border-gray-200 text-gray-700'"
+              class="p-2.5 rounded border text-center transition-colors"
+            >
+              MTN MoMo CI
+            </button>
+            <button
+              type="button"
+              @click="operateur = 'moov'"
+              :class="operateur === 'moov' ? 'border-ci-700 bg-ci-50 text-ci-800 font-bold' : 'border-gray-200 text-gray-700'"
+              class="p-2.5 rounded border text-center transition-colors"
+            >
+              Moov Money CI
+            </button>
+          </div>
+        </div>
+
+        <!-- Numéro de téléphone -->
+        <div class="mb-5">
+          <label for="numero-momo" class="block text-xs font-semibold text-gray-700 uppercase mb-1">Numéro de téléphone (+225)</label>
+          <input
+            id="numero-momo"
+            type="tel"
+            x-model="numeroTelephone"
+            placeholder="Ex : 07 00 00 00 00"
+            class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-ci-600 focus:outline-none"
+          />
+        </div>
+
+        <div class="p-3 bg-gray-50 rounded border border-gray-200 text-[11px] text-gray-500 mb-6">
+          <strong>Note de conception :</strong> Simulation d'interface prête à être reliée à l'API de paiement du futur backend Django.
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            @click="etapePaiement = 'choix'"
+            class="btn-blanc text-xs py-2 w-1/3 text-center"
+          >
+            Retour
+          </button>
+          <button
+            type="button"
+            @click="confirmerPaiement()"
+            class="btn-vert text-xs py-2 w-2/3 text-center"
+          >
+            Valider le soutien
+          </button>
+        </div>
+      </div>
+
+      <!-- Écran de validation réussie -->
+      <div x-show="etapePaiement === 'succes'" x-transition class="carte-blanche p-8 bg-white max-w-md mx-auto text-center">
+        <div class="w-10 h-10 rounded-full bg-ci-100 text-ci-800 font-bold flex items-center justify-center mx-auto mb-3 text-lg">✓</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1">Contribution enregistrée avec succès</h3>
+        <p class="text-xs text-gray-600 mb-6">
+          Votre pack de voix a été affecté à {{ candidat.nom_artistique }}. Un reçu électronique a été généré.
+        </p>
+
+        <div class="flex gap-2 justify-center">
+          <a href="{% url 'classement' %}" class="btn-vert text-xs py-2 px-4">
+            Consulter le classement
+          </a>
+          <button
+            type="button"
+            @click="etapePaiement = 'choix'"
+            class="btn-blanc text-xs py-2 px-4"
+          >
+            Retour à la sélection
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

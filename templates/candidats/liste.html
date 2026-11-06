@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Candidats — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Page de consultation des candidats inscrits à la compétition.
+  Comprend un moteur de recherche par texte et un filtrage par niveau académique
+  géré de manière réactive via Alpine.js sans rechargement de page.
+-->
+<div class="py-12 bg-gray-50 min-h-screen" x-data="{
+  recherche: '',
+  categorieChoisie: 'tous',
+  estVisible(nom, categorie) {
+    const matchNom = this.recherche === '' || nom.toLowerCase().includes(this.recherche.toLowerCase());
+    const matchCat = this.categorieChoisie === 'tous' || categorie === this.categorieChoisie;
+    return matchNom && matchCat;
+  }
+}">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête de section -->
+    <div class="border-b border-gray-200 pb-8 mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Liste officielle des candidats</h1>
+      <p class="text-sm text-gray-600 mt-2">
+        Consultez l'ensemble des élèves et étudiants en compétition représentant les établissements ivoiriens.
+      </p>
+    </div>
+
+    <!-- Barre d'outils : Recherche et Filtres par Catégorie -->
+    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+
+      <!-- Champ de saisie pour recherche textuelle -->
+      <div class="w-full md:w-96">
+        <label for="recherche-candidat" class="sr-only">Rechercher</label>
+        <input
+          id="recherche-candidat"
+          type="text"
+          x-model="recherche"
+          placeholder="Rechercher par nom de scène ou d'artiste..."
+          class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ci-600 focus:border-ci-600"
+        />
+      </div>
+
+      <!-- Filtres par catégorie scolaire -->
+      <div class="flex flex-wrap gap-2 w-full md:w-auto">
+        <button
+          type="button"
+          @click="categorieChoisie = 'tous'"
+          :class="categorieChoisie === 'tous' ? 'bg-ci-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+          class="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors"
+        >
+          Tous les niveaux
+        </button>
+        <button
+          type="button"
+          @click="categorieChoisie = 'college'"
+          :class="categorieChoisie === 'college' ? 'bg-ci-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+          class="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors"
+        >
+          Collèges
+        </button>
+        <button
+          type="button"
+          @click="categorieChoisie = 'lycee'"
+          :class="categorieChoisie === 'lycee' ? 'bg-ci-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+          class="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors"
+        >
+          Lycées
+        </button>
+        <button
+          type="button"
+          @click="categorieChoisie = 'universite'"
+          :class="categorieChoisie === 'universite' ? 'bg-ci-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+          class="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors"
+        >
+          Universités & Grandes Écoles
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Grille des candidats (design naturel, cartes d'identité académiques sobres) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for c in candidats %}
+      <div
+        class="carte-blanche p-6 flex flex-col justify-between"
+        x-show="estVisible('{{ c.nom_artistique }} {{ c.prenom }} {{ c.nom }} {{ c.etablissement.nom }}', '{{ c.categorie.slug }}')"
+      >
+        <div>
+          <!-- Ligne de statut et classement -->
+          <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+            <span class="text-xs font-bold text-ci-800 bg-ci-50 px-2.5 py-1 rounded border border-ci-200">
+              Classement général #{{ c.rang }}
+            </span>
+            <span class="text-xs font-medium text-gray-500">
+              {{ c.categorie.nom }}
+            </span>
+          </div>
+
+          <!-- Nom de scène & état civil -->
+          <h2 class="text-xl font-bold text-gray-900 leading-tight mb-1">
+            {{ c.nom_artistique }}
+          </h2>
+          <p class="text-xs text-gray-500 mb-3">
+            {{ c.prenom }} {{ c.nom }} · {{ c.age }} ans · Style : {{ c.style }}
+          </p>
+
+          <!-- Établissement représenté -->
+          <div class="bg-gray-50 border border-gray-200 rounded p-3 mb-4">
+            <div class="text-xs font-semibold text-gray-900 truncate">
+              {{ c.etablissement.nom }}
+            </div>
+            <div class="text-xs text-gray-500 mt-0.5">
+              Commune : {{ c.commune }} ({{ c.ville }})
+            </div>
+          </div>
+
+          <!-- Extrait de présentation -->
+          <p class="text-xs text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+            {{ c.bio }}
+          </p>
+        </div>
+
+        <!-- Pied de fiche : votes et actions -->
+        <div class="pt-4 border-t border-gray-100 mt-2">
+          <div class="flex items-baseline justify-between mb-4">
+            <span class="text-xs text-gray-500 font-medium">Voix cumulées</span>
+            <span class="text-xl font-extrabold text-ci-700">{{ c.votes }}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <a href="{% url 'candidat_detail' c.id %}" class="btn-blanc text-xs py-2 text-center">
+              Consulter le profil
+            </a>
+            <a href="{% url 'vote' c.id %}" class="btn-vert text-xs py-2 text-center">
+              Voter
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

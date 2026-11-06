@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Connexion — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Page d'authentification pour les candidats et organisateurs.
+  Présentation sobre blanc & vert, prête pour django.contrib.auth.
+-->
+<div class="py-16 bg-gray-50 min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-md w-full carte-blanche p-8 bg-white">
+
+    <div class="text-center mb-8">
+      <div class="w-12 h-12 rounded-lg bg-ci-700 text-white font-black text-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+        RE
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900">Espace de connexion</h1>
+      <p class="text-xs text-gray-500 mt-1">
+        Accédez à votre compte candidat ou organisateur RAP ÉCOLE
+      </p>
+    </div>
+
+    <!-- Formulaire d'authentification -->
+    <form action="{% url 'espace_candidat' %}" method="get" class="space-y-4 text-xs">
+      <div>
+        <label for="identifiant" class="block font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          Identifiant / Adresse courriel
+        </label>
+        <input
+          id="identifiant"
+          type="text"
+          placeholder="Ex : candidat@etablissement.ci"
+          value="kader.kone@lyceeclassique.ci"
+          class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label for="motdepasse" class="block font-semibold text-gray-700 uppercase tracking-wider">
+            Mot de passe
+          </label>
+          <a href="#" class="text-[11px] text-ci-700 hover:underline">Mot de passe oublié ?</a>
+        </div>
+        <input
+          id="motdepasse"
+          type="password"
+          value="••••••••••••"
+          class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none"
+        />
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="btn-vert w-full py-2.5 text-sm text-center">
+          Se connecter à mon espace
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 pt-6 border-t border-gray-100 text-center text-xs text-gray-600">
+      <p>Votre établissement n'est pas encore représenté ?</p>
+      <a href="{% url 'inscription' %}" class="text-ci-700 font-bold hover:underline mt-1 inline-block">
+        Déposer une candidature d'élève ou d'étudiant →
+      </a>
+    </div>
+
+    <div class="mt-4 text-center">
+      <a href="{% url 'admin_dashboard' %}" class="text-[11px] text-gray-400 hover:text-gray-600">
+        Accès direct espace d'organisation (démo) →
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% block title %}Accueil — RAP ÉCOLE | Championnat Scolaire et Universitaire (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+
+<!-- ========================================================================= -->
+<!-- SECTION PRINCIPALE (HERO BANNER VERT & BLANC ÉPURÉ)                       -->
+<!-- ========================================================================= -->
+<section class="bg-gradient-to-b from-ci-50 via-white to-gray-50 border-b border-gray-200 py-16 md:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+    <!-- Badge contextuel officiel -->
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-ci-200 text-ci-800 text-xs font-semibold uppercase tracking-wider mb-6 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-ci-600"></span>
+      Édition Nationale 2026 · République de Côte d'Ivoire
+    </div>
+
+    <!-- Titre clair et solennel -->
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight max-w-4xl mx-auto leading-tight mb-6">
+      Le championnat de rap et d'éloquence <span class="text-ci-700">inter-établissements</span>
+    </h1>
+
+    <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+      Une compétition académique célébrant l'écriture, le rythme et le talent des élèves et étudiants des collèges, lycées et universités de Côte d'Ivoire.
+    </p>
+
+    <!-- Boutons d'action clairs -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+      <a href="{% url 'candidats' %}" class="btn-vert w-full sm:w-auto text-base">
+        Découvrir les participants
+      </a>
+      <a href="{% url 'inscription' %}" class="btn-blanc w-full sm:w-auto text-base">
+        Participer à la compétition
+      </a>
+    </div>
+
+    <!-- Indicateurs clés de la compétition (Chiffres réels et sobres) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+      <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="text-3xl font-extrabold text-ci-700">{{ stats.total_candidats }}</div>
+        <div class="text-xs font-medium text-gray-500 uppercase mt-1">Candidats retenus</div>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="text-3xl font-extrabold text-gray-900">{{ stats.etablissements }}</div>
+        <div class="text-xs font-medium text-gray-500 uppercase mt-1">Établissements</div>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="text-3xl font-extrabold text-ci-700">{{ stats.total_votes }}</div>
+        <div class="text-xs font-medium text-gray-500 uppercase mt-1">Voix exprimées</div>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="text-3xl font-extrabold text-gray-900">3</div>
+        <div class="text-xs font-medium text-gray-500 uppercase mt-1">Catégories d'études</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================================= -->
+<!-- SECTION : PHASES DE LA COMPÉTITION (CALENDRIER)                           -->
+<!-- ========================================================================= -->
+<section class="py-14 bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Déroulement de la compétition</h2>
+      <p class="text-sm text-gray-500 mt-2">Suivi du calendrier officiel des épreuves</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      {% for phase in phases %}
+      <div class="p-4 rounded-lg border {% if phase.statut == 'en_cours' %}border-ci-600 bg-ci-50{% elif phase.statut == 'termine' %}border-gray-200 bg-gray-50{% else %}border-gray-200 bg-white{% endif %}">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-gray-500">Étape {{ forloop.counter }}</span>
+          {% if phase.statut == 'en_cours' %}
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-ci-600 text-white">En cours</span>
+          {% elif phase.statut == 'termine' %}
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-gray-200 text-gray-700">Validé</span>
+          {% else %}
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-gray-100 text-gray-500">À venir</span>
+          {% endif %}
+        </div>
+        <div class="font-semibold text-gray-900 text-sm mb-1">{{ phase.nom }}</div>
+        <div class="text-xs text-gray-500">{{ phase.date }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================= -->
+<!-- SECTION : CONFRONTATIONS EN COURS (DUELS FACE-À-FACE)                     -->
+<!-- ========================================================================= -->
+<section class="py-16 bg-gray-50 border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Confrontations en cours</h2>
+        <p class="text-sm text-gray-600 mt-1">Les duels opposant les candidats de différents établissements</p>
+      </div>
+      <a href="{% url 'duels' %}" class="text-sm font-semibold text-ci-700 hover:text-ci-800">
+        Toutes les confrontations →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% for duel in duels_actifs %}
+      <div class="carte-blanche p-6 bg-white">
+        <!-- En-tête du duel -->
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-5">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded bg-ci-50 text-ci-800 border border-ci-200">
+            {{ duel.phase }}
+          </span>
+          <span class="text-xs font-medium text-gray-500">
+            Fin des votes dans {{ duel.temps_restant }}
+          </span>
+        </div>
+
+        <!-- Deux candidats face-à-face (Sans aucun avatar) -->
+        <div class="grid grid-cols-5 items-center gap-3 text-center mb-6">
+
+          <!-- Candidat 1 -->
+          <div class="col-span-2">
+            <div class="font-bold text-base text-gray-900">{{ duel.candidat1.nom_artistique }}</div>
+            <div class="text-xs text-gray-500 truncate" title="{{ duel.candidat1.etablissement.nom }}">{{ duel.candidat1.etablissement.nom }}</div>
+            <div class="text-xs text-gray-400 mt-1">{{ duel.candidat1.commune }}, {{ duel.candidat1.ville }}</div>
+            <div class="mt-3 text-lg font-extrabold text-ci-700">{{ duel.votes1 }} <span class="text-xs font-normal text-gray-500">voix</span></div>
+          </div>
+
+          <!-- Séparateur VS épuré -->
+          <div class="col-span-1 flex justify-center">
+            <span class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+              VS
+            </span>
+          </div>
+
+          <!-- Candidat 2 -->
+          <div class="col-span-2">
+            <div class="font-bold text-base text-gray-900">{{ duel.candidat2.nom_artistique }}</div>
+            <div class="text-xs text-gray-500 truncate" title="{{ duel.candidat2.etablissement.nom }}">{{ duel.candidat2.etablissement.nom }}</div>
+            <div class="text-xs text-gray-400 mt-1">{{ duel.candidat2.commune }}, {{ duel.candidat2.ville }}</div>
+            <div class="mt-3 text-lg font-extrabold text-ci-700">{{ duel.votes2 }} <span class="text-xs font-normal text-gray-500">voix</span></div>
+          </div>
+
+        </div>
+
+        <!-- Jauge comparative de vote -->
+        <div class="mb-5">
+          <div class="h-2 w-full bg-gray-200 rounded-full flex overflow-hidden">
+            <div class="bg-ci-700 h-full" style="width: {{ duel.pct1 }}%;"></div>
+            <div class="bg-gray-400 h-full" style="width: {{ duel.pct2 }}%;"></div>
+          </div>
+          <div class="flex justify-between text-xs text-gray-500 mt-1.5 font-medium">
+            <span>{{ duel.pct1 }}%</span>
+            <span>{{ duel.pct2 }}%</span>
+          </div>
+        </div>
+
+        <!-- Action directe -->
+        <a href="{% url 'duel_detail' duel.id %}" class="btn-vert w-full text-sm">
+          Consulter le face-à-face et voter
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================= -->
+<!-- SECTION : CANDIDATS EN TÊTE (PODIUM ACTUEL)                               -->
+<!-- ========================================================================= -->
+<section class="py-16 bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Participants en vue</h2>
+        <p class="text-sm text-gray-600 mt-1">Les candidats ayant recueilli le plus de voix au classement général</p>
+      </div>
+      <a href="{% url 'candidats' %}" class="text-sm font-semibold text-ci-700 hover:text-ci-800">
+        Consulter les {{ stats.total_candidats }} candidats →
+      </a>
+    </div>
+
+    <!-- Grille de cartes sobres et naturelles (sans avatars graphiques) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for c in candidats_top %}
+      <div class="carte-blanche p-5 flex flex-col justify-between">
+        <div>
+          <!-- Ligne de rang et de catégorie -->
+          <div class="flex items-center justify-between mb-3 text-xs">
+            <span class="font-bold text-ci-700 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">Rang #{{ c.rang }}</span>
+            <span class="text-gray-500 font-medium">{{ c.categorie.nom }}</span>
+          </div>
+
+          <!-- Nom et identité de l'élève -->
+          <h3 class="font-bold text-lg text-gray-900 leading-snug">{{ c.nom_artistique }}</h3>
+          <p class="text-xs text-gray-500 mb-2">{{ c.prenom }} {{ c.nom }} ({{ c.age }} ans)</p>
+
+          <!-- Établissement représenté -->
+          <div class="text-xs text-gray-700 bg-gray-50 p-2.5 rounded border border-gray-100 mb-4">
+            <span class="font-semibold block text-gray-900 truncate">{{ c.etablissement.nom }}</span>
+            <span class="text-gray-500">{{ c.commune }} · {{ c.ville }}</span>
+          </div>
+
+          <!-- Extrait musical déclaré -->
+          <div class="text-xs text-gray-600 mb-4 flex items-center gap-1.5">
+            <span class="text-ci-700">♪</span>
+            <span class="truncate italic">« {{ c.audio_titre }} »</span>
+          </div>
+        </div>
+
+        <!-- Pied de carte : total des votes et lien -->
+        <div class="border-t border-gray-100 pt-4 mt-2">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="text-xs text-gray-500 font-medium">Total des voix</span>
+            <span class="text-lg font-extrabold text-ci-700">{{ c.votes }}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="{% url 'candidat_detail' c.id %}" class="btn-blanc text-xs py-2 text-center">Fiche</a>
+            <a href="{% url 'vote' c.id %}" class="btn-vert text-xs py-2 text-center">Voter</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================= -->
+<!-- SECTION : PRINCIPE & OBJECTIFS DE LA COMPÉTITION                          -->
+<!-- ========================================================================= -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto text-center mb-12">
+      <h2 class="text-2xl font-bold text-gray-900">Une compétition pour valoriser la jeunesse</h2>
+      <p class="text-sm text-gray-600 mt-2">
+        RAP ÉCOLE concilie créativité artistique et respect du cadre scolaire en Côte d'Ivoire.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <div class="w-8 h-8 rounded bg-ci-100 text-ci-800 font-bold flex items-center justify-center text-sm mb-4">1</div>
+        <h3 class="font-bold text-gray-900 text-base mb-2">Inscription et validation scolaire</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          Chaque participant doit être régulièrement inscrit dans un collège, lycée ou une université reconnue par l'État de Côte d'Ivoire.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <div class="w-8 h-8 rounded bg-ci-100 text-ci-800 font-bold flex items-center justify-center text-sm mb-4">2</div>
+        <h3 class="font-bold text-gray-900 text-base mb-2">Expression soignée & thèmes citoyens</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          Les textes présentés traitent de l'éducation, de l'avenir, de la cohésion sociale et de la culture ivoirienne, dans le respect de l'éthique académique.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <div class="w-8 h-8 rounded bg-ci-100 text-ci-800 font-bold flex items-center justify-center text-sm mb-4">3</div>
+        <h3 class="font-bold text-gray-900 text-base mb-2">Vote populaire & jury académique</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          Le public soutient son établissement en ligne et un collège de jurés évalue la technique, la diction et la qualité littéraire des morceaux.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

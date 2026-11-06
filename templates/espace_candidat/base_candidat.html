@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Mon Espace Candidat — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Gabarit de base pour l'espace personnel du candidat.
+  Navigation latérale sobre blanc & vert sans icônes fantaisistes ni avatars.
+-->
+<div class="bg-gray-50 min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
+
+      <!-- Navigation latérale (Menu Candidat) -->
+      <aside class="carte-blanche p-5 bg-white space-y-1">
+        <div class="pb-4 mb-4 border-b border-gray-100">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-ci-800 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">
+            Espace Participant
+          </span>
+          <h2 class="text-lg font-bold text-gray-900 mt-2">{{ candidat.nom_artistique }}</h2>
+          <p class="text-xs text-gray-500">{{ candidat.etablissement.nom }}</p>
+        </div>
+
+        <nav class="space-y-1 text-xs font-semibold">
+          <a
+            href="{% url 'espace_candidat' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'dashboard' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Vue d'ensemble
+          </a>
+          <a
+            href="{% url 'candidat_profil' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'profil' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Modifier mon profil
+          </a>
+          <a
+            href="{% url 'candidat_medias' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'medias' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Gestion des morceaux & médias
+          </a>
+          <a
+            href="{% url 'candidat_duels' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'duels' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Mes confrontations
+          </a>
+          <a
+            href="{% url 'candidat_notifications' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'notifications' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Communications officielles
+          </a>
+        </nav>
+
+        <div class="pt-4 mt-4 border-t border-gray-100 text-xs">
+          <a href="{% url 'candidat_detail' candidat.id %}" class="text-ci-700 hover:underline block mb-2">
+            Voir ma fiche publique →
+          </a>
+          <a href="{% url 'connexion' %}" class="text-gray-500 hover:text-red-700 block">
+            Déconnexion
+          </a>
+        </div>
+      </aside>
+
+      <!-- Zone de contenu spécifique -->
+      <section class="md:col-span-3">
+        {% block candidat_content %}{% endblock %}
+      </section>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

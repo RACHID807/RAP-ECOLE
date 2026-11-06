@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Classement Officiel — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Page de classement officiel des candidats et établissements.
+  Comprend les 3 premiers mis en valeur avec sobriété
+  et un tableau complet filtrable par niveau scolaire via Alpine.js.
+-->
+<div class="py-12 bg-gray-50 min-h-screen" x-data="{ onglet: 'tous' }">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="border-b border-gray-200 pb-6 mb-8 text-center max-w-2xl mx-auto">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Classement officiel de la compétition</h1>
+      <p class="text-sm text-gray-600 mt-2">
+        Mise à jour en temps réel des voix recueillies par les représentants des établissements.
+      </p>
+    </div>
+
+    <!-- Filtres par niveau scolaire / universitaire -->
+    <div class="flex justify-center gap-2 mb-8 flex-wrap">
+      <button
+        type="button"
+        @click="onglet = 'tous'"
+        :class="onglet === 'tous' ? 'bg-ci-700 text-white' : 'bg-white text-gray-700 border border-gray-300'"
+        class="px-4 py-2 rounded-md text-xs font-semibold"
+      >
+        Classement Général
+      </button>
+      <button
+        type="button"
+        @click="onglet = 'college'"
+        :class="onglet === 'college' ? 'bg-ci-700 text-white' : 'bg-white text-gray-700 border border-gray-300'"
+        class="px-4 py-2 rounded-md text-xs font-semibold"
+      >
+        Collèges
+      </button>
+      <button
+        type="button"
+        @click="onglet = 'lycee'"
+        :class="onglet === 'lycee' ? 'bg-ci-700 text-white' : 'bg-white text-gray-700 border border-gray-300'"
+        class="px-4 py-2 rounded-md text-xs font-semibold"
+      >
+        Lycées
+      </button>
+      <button
+        type="button"
+        @click="onglet = 'universite'"
+        :class="onglet === 'universite' ? 'bg-ci-700 text-white' : 'bg-white text-gray-700 border border-gray-300'"
+        class="px-4 py-2 rounded-md text-xs font-semibold"
+      >
+        Universités & Grandes Écoles
+      </button>
+    </div>
+
+    <!-- Mise en avant des 3 premiers (Podium sobre, sans artifices ni avatars) -->
+    <div x-show="onglet === 'tous'" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      {% for c in candidats|slice:":3" %}
+      <div class="carte-blanche p-6 bg-white border-t-4 {% if forloop.counter == 1 %}border-t-ci-700 ring-1 ring-ci-600{% elif forloop.counter == 2 %}border-t-gray-400{% else %}border-t-gray-300{% endif %}">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-ci-800 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">
+            Position #{{ forloop.counter }}
+          </span>
+          <span class="text-xs text-gray-500 font-medium">{{ c.categorie.nom }}</span>
+        </div>
+
+        <h3 class="text-xl font-extrabold text-gray-900 mb-0.5">{{ c.nom_artistique }}</h3>
+        <p class="text-xs text-gray-500 mb-3">{{ c.prenom }} {{ c.nom }}</p>
+
+        <div class="bg-gray-50 p-2.5 rounded border border-gray-100 text-xs text-gray-700 mb-4">
+          <span class="font-bold block truncate">{{ c.etablissement.nom }}</span>
+          <span class="text-gray-500">{{ c.commune }} · {{ c.ville }}</span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-3 border-t border-gray-100">
+          <span class="text-xs text-gray-500 font-medium">Suffrages exprimés</span>
+          <span class="text-2xl font-black text-ci-700">{{ c.votes }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Tableau complet de tous les participants -->
+    <div class="carte-blanche overflow-hidden bg-white">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="text-base font-bold text-gray-900">Tableau récapitulatif des résultats</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-gray-50 text-gray-600 uppercase border-b border-gray-200">
+            <tr>
+              <th scope="col" class="px-6 py-3 font-semibold">Rang</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Candidat</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Établissement</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Commune & Ville</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Niveau</th>
+              <th scope="col" class="px-6 py-3 font-semibold text-right">Voix</th>
+              <th scope="col" class="px-6 py-3 font-semibold text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for c in candidats %}
+            <tr
+              class="hover:bg-gray-50 transition-colors"
+              x-show="onglet === 'tous' || onglet === '{{ c.categorie.slug }}'"
+            >
+              <td class="px-6 py-4 font-bold text-gray-900">
+                #{{ forloop.counter }}
+              </td>
+              <td class="px-6 py-4">
+                <div class="font-bold text-gray-900 text-sm">{{ c.nom_artistique }}</div>
+                <div class="text-gray-500">{{ c.prenom }} {{ c.nom }}</div>
+              </td>
+              <td class="px-6 py-4 text-gray-700 font-medium">
+                {{ c.etablissement.nom }}
+              </td>
+              <td class="px-6 py-4 text-gray-600">
+                {{ c.commune }} ({{ c.ville }})
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">
+                  {{ c.categorie.nom }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right font-extrabold text-ci-700 text-sm">
+                {{ c.votes }}
+              </td>
+              <td class="px-6 py-4 text-right">
+                <a href="{% url 'vote' c.id %}" class="btn-vert text-[11px] py-1 px-3">
+                  Voter
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

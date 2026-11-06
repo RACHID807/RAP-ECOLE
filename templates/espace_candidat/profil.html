@@ -1,0 +1,39 @@
+{% extends 'espace_candidat/base_candidat.html' %}
+{% block page_title %}Mon Profil{% endblock %}
+{% block candidat_content %}
+<div class="max-w-3xl">
+  <div class="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/40 text-yellow-400 text-xs mb-6">⚠️ SIMULATION — Les modifications ne seront pas enregistrées. Backend à connecter.</div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Avatar -->
+    <div class="card p-6 text-center flex flex-col items-center">
+      <div class="w-24 h-24 rounded-full flex items-center justify-center font-display font-black text-3xl text-white mb-4"
+           style="background:linear-gradient(135deg,{{ candidat.couleur }},{{ candidat.couleur }}88)">{{ candidat.avatar_initiales }}</div>
+      <div class="font-bold text-white mb-1">{{ candidat.nom_artistique }}</div>
+      <div class="text-gray-400 text-xs mb-4">{{ candidat.etablissement.nom }}</div>
+      <button class="btn-outline w-full text-sm" style="padding:.6rem 1rem" onclick="alert('Upload de photo — SIMULATION')">📷 Changer la photo</button>
+      <div class="mt-3 badge bg-green-900/40 border-green-700/50 text-green-400">✅ Profil actif</div>
+    </div>
+    <!-- Edit form -->
+    <div class="md:col-span-2 card p-6">
+      <h3 class="font-display font-bold text-xl text-white mb-5">Modifier mes informations</h3>
+      <form onsubmit="alert('Modifications sauvegardées [SIMULATION]');return false;">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div><label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Prénom</label><input type="text" value="{{ candidat.prenom }}" class="input text-sm"/></div>
+          <div><label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Nom</label><input type="text" value="{{ candidat.nom }}" class="input text-sm"/></div>
+        </div>
+        <div class="mb-4"><label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Nom artistique</label><input type="text" value="{{ candidat.nom_artistique }}" class="input text-sm"/></div>
+        <div class="mb-4"><label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Style de rap</label><input type="text" value="{{ candidat.style }}" class="input text-sm"/></div>
+        <div class="mb-4">
+          <label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Établissement</label>
+          <select class="input text-sm bg-dark-600">
+            {% for etab in etablissements %}<option {% if etab.id == candidat.etablissement_id %}selected{% endif %}>{{ etab.nom }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-5"><label class="text-gray-300 text-xs mb-1 block uppercase tracking-wider">Biographie</label>
+          <textarea rows="4" class="input text-sm resize-none">{{ candidat.bio }}</textarea></div>
+        <button type="submit" class="btn-primary">💾 Enregistrer [DÉMO]</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

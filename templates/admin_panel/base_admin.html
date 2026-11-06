@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Administration — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+
+{% block content %}
+<!--
+  Gabarit de base du panneau d'administration des organisateurs.
+  Style professionnel blanc & vert, navigation sobre.
+-->
+<div class="bg-gray-50 min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
+
+      <!-- Navigation latérale d'administration -->
+      <aside class="carte-blanche p-5 bg-white space-y-1">
+        <div class="pb-4 mb-4 border-b border-gray-100">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-ci-800 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">
+            Comité d'Organisation
+          </span>
+          <h2 class="text-base font-bold text-gray-900 mt-2">Panneau de gestion</h2>
+          <p class="text-xs text-gray-500">Administration RAP ÉCOLE CI</p>
+        </div>
+
+        <nav class="space-y-1 text-xs font-semibold">
+          <a
+            href="{% url 'admin_dashboard' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'dashboard' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Vue d'ensemble
+          </a>
+          <a
+            href="{% url 'admin_candidats' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'candidats' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Gestion des candidats
+          </a>
+          <a
+            href="{% url 'admin_votes' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'votes' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Journal des votes
+          </a>
+          <a
+            href="{% url 'admin_duels' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'duels' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Programmation des duels
+          </a>
+          <a
+            href="{% url 'admin_transactions' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'transactions' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Contributions & Mobile Money
+          </a>
+          <a
+            href="{% url 'admin_annonces' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'annonces' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Communiqués officiels
+          </a>
+          <a
+            href="{% url 'admin_parametres' %}"
+            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'parametres' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+          >
+            Paramètres du championnat
+          </a>
+        </nav>
+
+        <div class="pt-4 mt-4 border-t border-gray-100 text-xs">
+          <a href="{% url 'home' %}" class="text-ci-700 hover:underline block">
+            ← Revenir au portail public
+          </a>
+        </div>
+      </aside>
+
+      <!-- Contenu spécifique de chaque vue admin -->
+      <section class="md:col-span-3">
+        {% block admin_content %}{% endblock %}
+      </section>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
