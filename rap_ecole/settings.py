@@ -56,7 +56,7 @@ DATABASES = {
    
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rap_school_ivoire',
+        'NAME': 'rap_ecole_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
