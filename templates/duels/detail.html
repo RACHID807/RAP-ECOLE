@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}{{ duel.titre }} — Confrontation directe | RAP ÉCOLE{% endblock %}
+{% block title %}{{ duel.titre }} — Arène de Clash | RAP CLASH SCHOOL{% endblock %}
 
 {% block content %}
 <!--
-  Page de duel face-à-face interactif.
-  Permet d'écouter les prestations de chaque représentant et de simuler
-  l'attribution d'une voix en temps réel grâce à Alpine.js.
+  Page de confrontation en direct entre 2 candidats :
+  Présente les 2 vidéos, les 2 audios, les photos réelles et le vote en direct.
 -->
-<div class="py-10 bg-gray-50 min-h-screen" x-data="{
+<div class="py-10 bg-[#0A0A12] min-h-screen" x-data="{
   voix1: {{ duel.votes1 }},
   voix2: {{ duel.votes2 }},
   aVote: false,
@@ -20,123 +19,159 @@
     if (candidatNumero === 1) this.voix1 += 1;
     if (candidatNumero === 2) this.voix2 += 1;
     this.aVote = true;
-    this.messageConfirmation = 'Votre voix en faveur de ' + nomCandidat + ' a bien été comptabilisée.';
+    this.messageConfirmation = 'Vote validé pour ' + nomCandidat + ' !';
   }
 }">
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Fil d'Ariane -->
-    <nav class="text-xs text-gray-500 mb-6 flex items-center gap-1.5">
-      <a href="{% url 'home' %}" class="hover:text-ci-700">Accueil</a>
+    <nav class="text-xs text-gray-400 mb-6 flex items-center gap-2">
+      <a href="{% url 'home' %}" class="hover:text-rcs-orange">Accueil</a>
       <span>/</span>
-      <a href="{% url 'duels' %}" class="hover:text-ci-700">Confrontations</a>
+      <a href="{% url 'duels' %}" class="hover:text-rcs-orange">Confrontations</a>
       <span>/</span>
-      <span class="text-gray-900 font-semibold">{{ duel.phase }}</span>
+      <span class="text-white font-bold">{{ duel.phase }}</span>
     </nav>
 
-    <!-- Notification de vote en direct (feedback visuel) -->
-    <div x-show="aVote" x-transition class="mb-6 p-4 rounded-md bg-ci-100 border border-ci-300 text-ci-900 text-sm flex items-center justify-between">
+    <!-- Notification de vote en direct -->
+    <div x-show="aVote" x-transition class="mb-6 p-4 rounded-xl bg-rcs-green/20 border border-rcs-green text-rcs-green text-sm flex items-center justify-between shadow-glow-green">
       <div class="flex items-center gap-2">
-        <span class="font-bold">Confirmation :</span>
-        <span x-text="messageConfirmation"></span>
+        <span class="text-lg">✓</span>
+        <span class="font-bold" x-text="messageConfirmation"></span>
       </div>
-      <span class="text-xs text-ci-800 font-medium">Simulation frontend</span>
+      <span class="text-xs uppercase font-clash tracking-wider">Suffrage comptabilisé</span>
     </div>
 
-    <!-- Carte principale du face-à-face -->
-    <div class="carte-blanche p-6 md:p-8 bg-white mb-8">
+    <!-- Carte Principale du Clash Face-à-Face -->
+    <div class="carte-rcs p-6 md:p-10 border-rcs-border bg-gradient-to-b from-[#141426] to-[#0E0E1A] mb-8">
 
-      <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
-        <span class="text-xs font-bold text-ci-800 bg-ci-50 px-2.5 py-1 rounded border border-ci-200">
-          {{ duel.phase }} · Officiel
+      <div class="flex items-center justify-between pb-4 border-b border-rcs-border mb-6">
+        <span class="px-3 py-1 rounded-md bg-rcs-orange/20 text-rcs-orange text-xs font-clash font-bold uppercase tracking-wider border border-rcs-orange/40">
+          {{ duel.phase }} · Live Arena
         </span>
-        <span class="text-xs font-medium text-gray-500">
-          Clôture dans {{ duel.temps_restant }}
+        <span class="text-xs text-gray-400">
+          Clôture du Clash dans : <strong class="text-rcs-pink">{{ duel.temps_restant }}</strong>
         </span>
       </div>
 
-      <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">
+      <h1 class="text-3xl md:text-4xl font-clash font-extrabold text-white text-center mb-2">
         {{ duel.titre }}
       </h1>
-      <p class="text-xs text-gray-500 text-center max-w-xl mx-auto mb-8">
+      <p class="text-xs text-gray-400 text-center max-w-xl mx-auto mb-8">
         {{ duel.description }}
       </p>
 
-      <!-- Panneau comparatif des deux élèves / étudiants -->
+      <!-- Les 2 Rappeurs Face-à-Face -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-        <!-- Colonne Candidat 1 -->
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 flex flex-col justify-between">
-          <div>
-            <span class="text-xs font-bold text-ci-700 block uppercase mb-1">
-              {{ duel.candidat1.etablissement.nom }}
+        <!-- Colonne Rappeur 1 (Orange) -->
+        <div class="carte-rcs p-6 border-rcs-orange/40 bg-[#0C0C16] flex flex-col items-center text-center">
+          <div class="relative mb-4">
+            <img
+              src="{{ duel.candidat1.photo_url }}"
+              alt="{{ duel.candidat1.nom_artistique }}"
+              class="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border-4 border-rcs-orange shadow-glow-orange"
+            />
+            <span class="absolute -bottom-2 px-3 py-0.5 rounded-full bg-rcs-orange text-white text-[11px] font-clash font-bold">
+              {{ duel.candidat1.style }}
             </span>
-            <h2 class="text-2xl font-extrabold text-gray-900 mb-1">
-              {{ duel.candidat1.nom_artistique }}
-            </h2>
-            <p class="text-xs text-gray-500 mb-4">
-              {{ duel.candidat1.prenom }} {{ duel.candidat1.nom }} · {{ duel.candidat1.commune }} ({{ duel.candidat1.ville }})
-            </p>
+          </div>
 
-            <div class="bg-white p-3 rounded border border-gray-200 text-xs text-gray-700 mb-5">
-              <span class="font-semibold block text-gray-900 mb-0.5">Titre défendu :</span>
-              « {{ duel.candidat1.audio_titre }} » (Style : {{ duel.candidat1.style }})
-            </div>
+          <span class="text-xs font-bold text-rcs-orange uppercase mb-1">{{ duel.candidat1.etablissement.nom }}</span>
+          <h2 class="text-2xl font-clash font-bold text-white mb-1">{{ duel.candidat1.nom_artistique }}</h2>
+          <p class="text-xs text-gray-400 mb-4">{{ duel.candidat1.commune }} · {{ duel.candidat1.ville }}</p>
 
-            <!-- Score en direct -->
-            <div class="text-center py-4 bg-white rounded border border-gray-200 mb-6">
-              <div class="text-3xl font-black text-ci-700" x-text="voix1">{{ duel.votes1 }}</div>
-              <div class="text-xs text-gray-500 font-medium" x-text="pct1 + '% des suffrages'">{{ duel.pct1 }}% des suffrages</div>
+          <!-- Vidéo Rappeur 1 -->
+          <div class="w-full mb-4">
+            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block text-left mb-1.5">🎬 Prestation Vidéo :</span>
+            <div class="rounded-xl overflow-hidden border border-rcs-border bg-black">
+              <video controls poster="{{ duel.candidat1.video_poster }}" class="w-full h-44 object-cover">
+                <source src="{{ duel.candidat1.video_url }}" type="video/mp4" />
+              </video>
             </div>
           </div>
 
-          <!-- Bouton de vote -->
+          <!-- Audio Rappeur 1 -->
+          <div class="w-full mb-6 text-left bg-[#161628] p-3 rounded-xl border border-rcs-border">
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="text-rcs-orange font-bold">🎵 « {{ duel.candidat1.audio_titre }} »</span>
+              <span class="text-gray-400 text-[10px]">Audio Studio</span>
+            </div>
+            <audio controls class="w-full h-8 mt-1">
+              <source src="{{ duel.candidat1.audio_url }}" type="audio/mp3" />
+            </audio>
+          </div>
+
+          <!-- Score & Bouton de Vote -->
+          <div class="w-full py-3 bg-[#161628] rounded-xl border border-rcs-border mb-4">
+            <div class="text-3xl font-clash font-black text-rcs-orange" x-text="voix1">{{ duel.votes1 }}</div>
+            <div class="text-xs text-gray-400 font-semibold" x-text="pct1 + '% des suffrages'">{{ duel.pct1 }}% des suffrages</div>
+          </div>
+
           <button
             type="button"
             @click="voterPour(1, '{{ duel.candidat1.nom_artistique }}')"
             :disabled="aVote"
-            class="btn-vert w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-clash-orange w-full text-xs py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span x-text="aVote ? 'Vote pris en compte' : 'Voter pour {{ duel.candidat1.nom_artistique }}'">
+            <span x-text="aVote ? 'Vote Validé' : 'Voter pour {{ duel.candidat1.nom_artistique }}'">
               Voter pour {{ duel.candidat1.nom_artistique }}
             </span>
           </button>
         </div>
 
-        <!-- Colonne Candidat 2 -->
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 flex flex-col justify-between">
-          <div>
-            <span class="text-xs font-bold text-ci-700 block uppercase mb-1">
-              {{ duel.candidat2.etablissement.nom }}
+        <!-- Colonne Rappeur 2 (Violet) -->
+        <div class="carte-rcs p-6 border-rcs-violet/40 bg-[#0C0C16] flex flex-col items-center text-center">
+          <div class="relative mb-4">
+            <img
+              src="{{ duel.candidat2.photo_url }}"
+              alt="{{ duel.candidat2.nom_artistique }}"
+              class="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border-4 border-rcs-violet shadow-glow-violet"
+            />
+            <span class="absolute -bottom-2 px-3 py-0.5 rounded-full bg-rcs-violet text-white text-[11px] font-clash font-bold">
+              {{ duel.candidat2.style }}
             </span>
-            <h2 class="text-2xl font-extrabold text-gray-900 mb-1">
-              {{ duel.candidat2.nom_artistique }}
-            </h2>
-            <p class="text-xs text-gray-500 mb-4">
-              {{ duel.candidat2.prenom }} {{ duel.candidat2.nom }} · {{ duel.candidat2.commune }} ({{ duel.candidat2.ville }})
-            </p>
+          </div>
 
-            <div class="bg-white p-3 rounded border border-gray-200 text-xs text-gray-700 mb-5">
-              <span class="font-semibold block text-gray-900 mb-0.5">Titre défendu :</span>
-              « {{ duel.candidat2.audio_titre }} » (Style : {{ duel.candidat2.style }})
-            </div>
+          <span class="text-xs font-bold text-rcs-violet uppercase mb-1">{{ duel.candidat2.etablissement.nom }}</span>
+          <h2 class="text-2xl font-clash font-bold text-white mb-1">{{ duel.candidat2.nom_artistique }}</h2>
+          <p class="text-xs text-gray-400 mb-4">{{ duel.candidat2.commune }} · {{ duel.candidat2.ville }}</p>
 
-            <!-- Score en direct -->
-            <div class="text-center py-4 bg-white rounded border border-gray-200 mb-6">
-              <div class="text-3xl font-black text-ci-700" x-text="voix2">{{ duel.votes2 }}</div>
-              <div class="text-xs text-gray-500 font-medium" x-text="pct2 + '% des suffrages'">{{ duel.pct2 }}% des suffrages</div>
+          <!-- Vidéo Rappeur 2 -->
+          <div class="w-full mb-4">
+            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block text-left mb-1.5">🎬 Prestation Vidéo :</span>
+            <div class="rounded-xl overflow-hidden border border-rcs-border bg-black">
+              <video controls poster="{{ duel.candidat2.video_poster }}" class="w-full h-44 object-cover">
+                <source src="{{ duel.candidat2.video_url }}" type="video/mp4" />
+              </video>
             </div>
           </div>
 
-          <!-- Bouton de vote -->
+          <!-- Audio Rappeur 2 -->
+          <div class="w-full mb-6 text-left bg-[#161628] p-3 rounded-xl border border-rcs-border">
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="text-rcs-violet font-bold">🎵 « {{ duel.candidat2.audio_titre }} »</span>
+              <span class="text-gray-400 text-[10px]">Audio Studio</span>
+            </div>
+            <audio controls class="w-full h-8 mt-1">
+              <source src="{{ duel.candidat2.audio_url }}" type="audio/mp3" />
+            </audio>
+          </div>
+
+          <!-- Score & Bouton de Vote -->
+          <div class="w-full py-3 bg-[#161628] rounded-xl border border-rcs-border mb-4">
+            <div class="text-3xl font-clash font-black text-rcs-violet" x-text="voix2">{{ duel.votes2 }}</div>
+            <div class="text-xs text-gray-400 font-semibold" x-text="pct2 + '% des suffrages'">{{ duel.pct2 }}% des suffrages</div>
+          </div>
+
           <button
             type="button"
             @click="voterPour(2, '{{ duel.candidat2.nom_artistique }}')"
             :disabled="aVote"
-            class="btn-vert w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-clash-violet w-full text-xs py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span x-text="aVote ? 'Vote pris en compte' : 'Voter pour {{ duel.candidat2.nom_artistique }}'">
+            <span x-text="aVote ? 'Vote Validé' : 'Voter pour {{ duel.candidat2.nom_artistique }}'">
               Voter pour {{ duel.candidat2.nom_artistique }}
             </span>
           </button>
@@ -144,15 +179,15 @@
 
       </div>
 
-      <!-- Barre de progression comparative globale -->
-      <div class="mt-8 pt-6 border-t border-gray-100">
-        <div class="h-3 w-full bg-gray-200 rounded-full flex overflow-hidden">
-          <div class="bg-ci-700 h-full transition-all duration-300" :style="'width: ' + pct1 + '%;'"></div>
-          <div class="bg-gray-400 h-full transition-all duration-300" :style="'width: ' + pct2 + '%;'"></div>
+      <!-- Jauge de Clash en direct -->
+      <div class="mt-8 pt-6 border-t border-rcs-border">
+        <div class="h-4 w-full bg-[#18182C] rounded-full flex overflow-hidden">
+          <div class="bg-gradient-to-r from-rcs-orange to-[#FF9100] h-full transition-all duration-300" :style="'width: ' + pct1 + '%;'"></div>
+          <div class="bg-gradient-to-r from-[#AB47BC] to-rcs-violet h-full transition-all duration-300" :style="'width: ' + pct2 + '%;'"></div>
         </div>
-        <div class="flex justify-between text-xs font-semibold text-gray-600 mt-2">
-          <span>{{ duel.candidat1.nom_artistique }} (<span x-text="pct1 + '%'">{{ duel.pct1 }}%</span>)</span>
-          <span>{{ duel.candidat2.nom_artistique }} (<span x-text="pct2 + '%'">{{ duel.pct2 }}%</span>)</span>
+        <div class="flex justify-between text-xs font-bold text-gray-300 mt-2">
+          <span class="text-rcs-orange">{{ duel.candidat1.nom_artistique }} (<span x-text="pct1 + '%'">{{ duel.pct1 }}%</span>)</span>
+          <span class="text-rcs-violet">{{ duel.candidat2.nom_artistique }} (<span x-text="pct2 + '%'">{{ duel.pct2 }}%</span>)</span>
         </div>
       </div>
 

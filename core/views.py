@@ -1,10 +1,8 @@
 """
 Vues de l'application 'core'.
-Chaque vue réceptionne une requête HTTP, prépare les données contextuelles
-et injecte le tout dans un template HTML Django.
-Les données proviennent actuellement de 'core.data' pour la phase frontend,
-et seront remplacées par des requêtes de modèles (Model.objects.all(), etc.)
-lors de l'implémentation du backend Django.
+Toutes les données fictives ont été retirées.
+Les vues transmettent les données de la base (actuellement vides)
+et gèrent proprement les cas où aucun candidat ou duel n'est encore enregistré.
 """
 
 from django.shortcuts import render
@@ -16,48 +14,8 @@ from .data import (
     get_all_candidats_enriched, get_all_duels_enriched,
 )
 
-# ---------------------------------------------------------------------------
-# TRANSACTIONS DE DÉMONSTRATION (RÉFÉRENCES OPÉRATEURS IVOIRIENS)
-# Préparé pour Wave, Orange Money CI, MTN Mobile Money CI, Moov Money
-# ---------------------------------------------------------------------------
-TRANSACTIONS_DEMO = [
-    {
-        'id': 1,
-        'candidat': 'Kader MC',
-        'pack': 'Pack Soutien Établissement',
-        'montant': 1000,
-        'operateur': 'Wave Côte d\'Ivoire',
-        'date': '05/11/2026 14:32',
-        'statut': 'succes',
-    },
-    {
-        'id': 2,
-        'candidat': 'Aïcha La Plume',
-        'pack': 'Pack Communauté',
-        'montant': 2500,
-        'operateur': 'Orange Money CI',
-        'date': '05/11/2026 11:15',
-        'statut': 'succes',
-    },
-    {
-        'id': 3,
-        'candidat': 'Yopougon Boy',
-        'pack': 'Pack Découverte',
-        'montant': 500,
-        'operateur': 'MTN MoMo CI',
-        'date': '04/11/2026 18:40',
-        'statut': 'succes',
-    },
-    {
-        'id': 4,
-        'candidat': 'Junior Flow',
-        'pack': 'Pack Soutien Établissement',
-        'montant': 1000,
-        'operateur': 'Moov Money CI',
-        'date': '04/11/2026 09:20',
-        'statut': 'en_attente',
-    },
-]
+# Liste des transactions réelles (initialement vide)
+TRANSACTIONS = []
 
 # ---------------------------------------------------------------------------
 # 1. PAGES PUBLIQUES
@@ -65,19 +23,25 @@ TRANSACTIONS_DEMO = [
 
 def home(request):
     """
-    Page d'accueil principale de la compétition.
-    Affiche la présentation officielle, les duels actifs, le podium actuel,
-    les statistiques consolidées et le calendrier des phases.
+    Page d'accueil : affiche les participants et les duels actifs s'ils existent,
+    ou des états d'invitation à l'inscription si la plateforme vient d'ouvrir.
     """
     all_candidats = get_all_candidats_enriched()
-    # Classement par nombre de voix décroissant
-    candidats_top = sorted(all_candidats, key=lambda c: c['votes'], reverse=True)[:4]
+    candidats_top = sorted(all_candidats, key=lambda c: c.get('votes', 0), reverse=True)[:4]
     duels_actifs = [d for d in get_all_duels_enriched() if d and d.get('statut') == 'en_cours']
+
+    # Calcul dynamique des statistiques
+    stats = dict(STATS_GENERALES)
+    stats['total_candidats'] = len(all_candidats)
+    stats['total_votes'] = sum(c.get('votes', 0) for c in all_candidats)
+    stats['total_duels'] = len(DUELS)
+    stats['duels_en_cours'] = len(duels_actifs)
+    stats['etablissements'] = len(ETABLISSEMENTS)
 
     contexte = {
         'candidats_top': candidats_top,
         'duels_actifs': duels_actifs,
-        'stats': STATS_GENERALES,
+        'stats': stats,
         'phases': PHASES,
         'categories': CATEGORIES,
         'annonces': ANNONCES,
@@ -86,10 +50,7 @@ def home(request):
 
 
 def candidats_list(request):
-    """
-    Répertoire des candidats inscrits à la compétition.
-    Permet la recherche par nom et le filtrage par niveau (Collège, Lycée, Université).
-    """
+    """Liste de tous les candidats inscrits."""
     contexte = {
         'candidats': get_all_candidats_enriched(),
         'categories': CATEGORIES,
@@ -98,21 +59,16 @@ def candidats_list(request):
 
 
 def candidat_detail(request, pk):
-    """
-    Fiche descriptive individuelle d'un candidat.
-    Affiche l'établissement, les statistiques de vote, l'extrait audio
-    et la possibilité d'apporter un soutien (gratuit ou via pack).
-    """
+    """Fiche individuelle d'un candidat avec sa photo, sa vidéo et son extrait audio."""
     candidat_brut = get_candidat_by_id(pk)
     if not candidat_brut:
-        raise Http404("Le profil de ce candidat est introuvable.")
+        raise Http404("Le profil de ce candidat est introuvable ou n'a pas encore été validé.")
 
     candidat = enrich_candidat(candidat_brut)
 
-    # Récupération des confrontations auxquelles ce candidat participe
     duels_associes = [
         d for d in get_all_duels_enriched()
-        if d and (d['candidat1_id'] == pk or d['candidat2_id'] == pk)
+        if d and (d.get('candidat1_id') == pk or d.get('candidat2_id') == pk)
     ]
 
     contexte = {
@@ -124,10 +80,7 @@ def candidat_detail(request, pk):
 
 
 def duels_list(request):
-    """
-    Liste générale des confrontations (en cours et achevées).
-    Met en relation les deux candidats de chaque affiche.
-    """
+    """Liste des duels de clash."""
     contexte = {
         'duels': get_all_duels_enriched(),
     }
@@ -135,11 +88,7 @@ def duels_list(request):
 
 
 def duel_detail(request, pk):
-    """
-    Page d'un duel en face-à-face direct.
-    Permet de comparer les deux participants, d'écouter leurs extraits
-    et de voter en temps réel avec calcul des pourcentages.
-    """
+    """Page face-à-face d'un duel."""
     duel = get_duel_by_id(pk)
     if not duel:
         raise Http404("Cette confrontation est introuvable.")
@@ -152,30 +101,37 @@ def duel_detail(request, pk):
 
 
 def vote_page(request, candidat_id):
-    """
-    Page dédiée au vote pour un candidat donné.
-    Propose :
-      1) Un vote gratuit quotidien par écoute
-      2) Un vote via packs de soutien (Mobile Money Côte d'Ivoire simulé)
-    """
+    """Espace de vote pour un candidat sélectionné."""
     candidat_brut = get_candidat_by_id(candidat_id)
     if not candidat_brut:
-        raise Http404("Candidat introuvable.")
+        # Si aucun candidat n'existe encore, on prépare un profil modèle vide
+        candidat = {
+            'id': candidat_id,
+            'nom_artistique': 'En attente d\'inscription',
+            'prenom': '',
+            'nom': '',
+            'votes': 0,
+            'photo_url': '',
+            'audio_titre': 'Aucun extrait déposé',
+            'audio_url': '',
+            'etablissement': {'nom': 'Établissement à définir'},
+            'commune': '',
+            'ville': 'Côte d\'Ivoire',
+        }
+    else:
+        candidat = enrich_candidat(candidat_brut)
 
     contexte = {
-        'candidat': enrich_candidat(candidat_brut),
+        'candidat': candidat,
         'vote_packages': VOTES_PACKAGES,
     }
     return render(request, 'vote/index.html', contexte)
 
 
 def classement(request):
-    """
-    Page officielle des classements de la compétition.
-    Comprend le tableau général et les filtres par catégorie scolaire.
-    """
+    """Classement officiel (Leaderboard)."""
     tous = get_all_candidats_enriched()
-    candidats_tries = sorted(tous, key=lambda c: c['votes'], reverse=True)
+    candidats_tries = sorted(tous, key=lambda c: c.get('votes', 0), reverse=True)
 
     contexte = {
         'candidats': candidats_tries,
@@ -185,29 +141,56 @@ def classement(request):
 
 
 # ---------------------------------------------------------------------------
-# 2. ESPACE PERSONNEL DU CANDIDAT (TABLEAU DE BORD)
+# 2. ESPACE CANDIDAT
 # ---------------------------------------------------------------------------
 
 def espace_candidat(request):
-    """
-    Vue d'accueil du tableau de bord d'un candidat connecté.
-    Utilise le premier candidat comme profil témoin pour la démonstration.
-    """
-    candidat = enrich_candidat(get_candidat_by_id(1))
+    """Tableau de bord personnel du candidat."""
+    all_cands = get_all_candidats_enriched()
+    candidat = all_cands[0] if all_cands else {
+        'id': 0,
+        'nom_artistique': 'Nouveau Candidat',
+        'prenom': 'Prénom',
+        'nom': 'Nom',
+        'votes': 0,
+        'rang': 0,
+        'style': 'À définir',
+        'photo_url': '',
+        'etablissement': {'nom': 'Aucun établissement sélectionné'},
+        'commune': '',
+        'ville': '',
+        'stats': {'duels_gagnes': 0, 'duels_perdus': 0, 'taux_victoire': 0},
+    }
+
     contexte = {
         'candidat': candidat,
         'notifications': ANNONCES,
         'stats': STATS_GENERALES,
-        'duels': [d for d in get_all_duels_enriched() if d and (d['candidat1_id'] == 1 or d['candidat2_id'] == 1)],
+        'duels': [],
         'active_page': 'dashboard',
     }
     return render(request, 'espace_candidat/dashboard.html', contexte)
 
 
 def candidat_profil(request):
-    """Formulaire de mise à jour du profil artistique et civil du candidat."""
+    """Mise à jour du profil et photo de profil du candidat."""
+    all_cands = get_all_candidats_enriched()
+    candidat = all_cands[0] if all_cands else {
+        'id': 0,
+        'nom_artistique': '',
+        'prenom': '',
+        'nom': '',
+        'age': '',
+        'style': '',
+        'bio': '',
+        'photo_url': '',
+        'etablissement': {'nom': ''},
+        'commune': '',
+        'ville': '',
+    }
+
     contexte = {
-        'candidat': enrich_candidat(get_candidat_by_id(1)),
+        'candidat': candidat,
         'etablissements': ETABLISSEMENTS,
         'categories': CATEGORIES,
         'active_page': 'profil',
@@ -216,76 +199,57 @@ def candidat_profil(request):
 
 
 def candidat_medias(request):
-    """Gestion des morceaux audio, vidéos et photos déposés par le candidat."""
-    medias_deposes = [
-        {
-            'id': 1,
-            'titre': 'La Voix des Cahiers (Enregistrement studio)',
-            'type': 'audio',
-            'duree': '2:45',
-            'date_depot': '25/10/2026',
-            'statut': 'valide',
-        },
-        {
-            'id': 2,
-            'titre': 'Prestation au Lycée Classique d\'Abidjan',
-            'type': 'video',
-            'duree': '3:20',
-            'date_depot': '29/10/2026',
-            'statut': 'valide',
-        },
-        {
-            'id': 3,
-            'titre': 'Freestyle Qualification Commune',
-            'type': 'audio',
-            'duree': '1:50',
-            'date_depot': '02/11/2026',
-            'statut': 'en_revue',
-        },
-    ]
+    """Dépôt de la vidéo et de l'extrait audio du candidat."""
+    all_cands = get_all_candidats_enriched()
+    candidat = all_cands[0] if all_cands else {
+        'id': 0,
+        'nom_artistique': '',
+        'audio_titre': '',
+        'audio_url': '',
+        'video_titre': '',
+        'video_url': '',
+        'video_poster': '',
+    }
+
     contexte = {
-        'candidat': enrich_candidat(get_candidat_by_id(1)),
-        'medias': medias_deposes,
+        'candidat': candidat,
         'active_page': 'medias',
     }
     return render(request, 'espace_candidat/medias.html', contexte)
 
 
 def candidat_duels_view(request):
-    """Historique des confrontations et résultats du candidat."""
+    """Historique des confrontations du candidat."""
     contexte = {
-        'candidat': enrich_candidat(get_candidat_by_id(1)),
-        'duels': [d for d in get_all_duels_enriched() if d and (d['candidat1_id'] == 1 or d['candidat2_id'] == 1)],
+        'candidat': get_all_candidats_enriched()[0] if get_all_candidats_enriched() else None,
+        'duels': [],
         'active_page': 'duels',
     }
     return render(request, 'espace_candidat/duels.html', contexte)
 
 
 def candidat_notifications(request):
-    """Boîte de réception des messages et annonces officielles adressées au candidat."""
+    """Notifications officielles."""
     contexte = {
-        'candidat': enrich_candidat(get_candidat_by_id(1)),
         'annonces': ANNONCES,
+        'candidat': get_all_candidats_enriched()[0] if get_all_candidats_enriched() else None,
         'active_page': 'notifications',
     }
     return render(request, 'espace_candidat/notifications.html', contexte)
 
 
 # ---------------------------------------------------------------------------
-# 3. PANNEAU D'ADMINISTRATION
+# 3. PANNEAU ADMIN
 # ---------------------------------------------------------------------------
 
 def admin_dashboard(request):
-    """
-    Vue de synthèse pour les organisateurs de la compétition :
-    chiffres globaux, progression des votes, inscriptions et calendrier.
-    """
+    """Vue d'ensemble de l'administration."""
     contexte = {
         'stats': STATS_GENERALES,
         'candidats': get_all_candidats_enriched(),
         'duels': get_all_duels_enriched(),
         'phases': PHASES,
-        'transactions': TRANSACTIONS_DEMO,
+        'transactions': TRANSACTIONS,
         'annonces': ANNONCES,
         'active_page': 'dashboard',
     }
@@ -293,7 +257,7 @@ def admin_dashboard(request):
 
 
 def admin_candidats(request):
-    """Gestion des fiches candidats, validation et modification des dossiers."""
+    """Gestion des candidats."""
     contexte = {
         'candidats': get_all_candidats_enriched(),
         'categories': CATEGORIES,
@@ -304,16 +268,9 @@ def admin_candidats(request):
 
 
 def admin_votes(request):
-    """Journal de contrôle des votes enregistrés sur la plateforme."""
-    journal_votes = [
-        {'id': 101, 'electeur': 'Citoyen_Abidjan_01', 'candidat': 'Kader MC', 'type': 'gratuit', 'date': '05/11/2026 14:40', 'commune': 'Cocody'},
-        {'id': 102, 'electeur': 'Citoyen_Abidjan_02', 'candidat': 'Aïcha La Plume', 'type': 'pack', 'date': '05/11/2026 14:35', 'commune': 'Cocody'},
-        {'id': 103, 'electeur': 'Citoyen_Yopougon_01', 'candidat': 'Yopougon Boy', 'type': 'gratuit', 'date': '05/11/2026 14:22', 'commune': 'Yopougon'},
-        {'id': 104, 'electeur': 'Citoyen_Plateau_01', 'candidat': 'Junior Flow', 'type': 'gratuit', 'date': '05/11/2026 14:10', 'commune': 'Plateau'},
-        {'id': 105, 'electeur': 'Citoyen_Yakro_01', 'candidat': 'Bélier du Centre', 'type': 'pack', 'date': '05/11/2026 13:50', 'commune': 'Yamoussoukro'},
-    ]
+    """Journal des votes."""
     contexte = {
-        'votes': journal_votes,
+        'votes': [],
         'stats': STATS_GENERALES,
         'active_page': 'votes',
     }
@@ -321,7 +278,7 @@ def admin_votes(request):
 
 
 def admin_duels(request):
-    """Programmation des rencontres, affectation des étapes et des jurys."""
+    """Gestion des duels."""
     contexte = {
         'duels': get_all_duels_enriched(),
         'phases': PHASES,
@@ -332,18 +289,18 @@ def admin_duels(request):
 
 
 def admin_transactions(request):
-    """Suivi comptable des contributions de soutien par opérateur (Wave, Orange, MTN, Moov)."""
+    """Suivi financier."""
     contexte = {
-        'transactions': TRANSACTIONS_DEMO,
+        'transactions': TRANSACTIONS,
         'vote_packages': VOTES_PACKAGES,
-        'total_montant': sum(t['montant'] for t in TRANSACTIONS_DEMO if t['statut'] == 'succes'),
+        'total_montant': 0,
         'active_page': 'transactions',
     }
     return render(request, 'admin_panel/transactions.html', contexte)
 
 
 def admin_annonces(request):
-    """Publication des communiqués et informations officielles pour les participants."""
+    """Gestion des annonces."""
     contexte = {
         'annonces': ANNONCES,
         'active_page': 'annonces',
@@ -352,7 +309,7 @@ def admin_annonces(request):
 
 
 def admin_parametres(request):
-    """Configuration générale des dates, des règles de vote et des coefficients."""
+    """Paramètres généraux."""
     contexte = {
         'phases': PHASES,
         'stats': STATS_GENERALES,
@@ -362,11 +319,11 @@ def admin_parametres(request):
 
 
 # ---------------------------------------------------------------------------
-# 4. AUTHENTIFICATION ET CANDIDATURE
+# 4. AUTH
 # ---------------------------------------------------------------------------
 
 def inscription(request):
-    """Dépôt de candidature d'un nouvel élève ou étudiant."""
+    """Inscription candidat."""
     contexte = {
         'categories': CATEGORIES,
         'etablissements': ETABLISSEMENTS,
@@ -375,6 +332,6 @@ def inscription(request):
 
 
 def connexion(request):
-    """Interface de connexion pour les candidats et organisateurs."""
+    """Connexion utilisateur."""
     contexte = {}
     return render(request, 'auth/connexion.html', contexte)
