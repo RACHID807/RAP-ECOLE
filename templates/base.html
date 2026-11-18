@@ -13,6 +13,7 @@
       theme: {
         extend: {
           colors: {
+<<<<<<< HEAD
             // Thème Sombre & Électrique de la maquette RCS
             rcs: {
               bg: '#0A0A12',
@@ -28,6 +29,28 @@
               pink: '#FF007F',      // Hot Pink
             }
           },
+=======
+            // Palette or (remplace l'ancien vert, les noms de classes restent les mêmes)
+                  ci: {
+                          50:  '#fff8e1',
+                          100: '#ffecb3',
+                          200: '#ffe082',
+                          300: '#ffd54f',
+                          400: '#ffca28',
+                          500: '#ffc107',
+                          600: '#ffc107',
+                          700: '#ffb300',
+                          800: '#ffa000',
+                          900: '#ff8f00',
+                        950: '#0a0a0a',
+                      },
+            // Accent vert émeraude (remplace l'orange)
+              ivoire: {
+                            orange: '#00e676',
+                            light: '#16160f',
+                    },
+            },
+>>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
           fontFamily: {
             display: ['"Impact"', '"Oswald"', '"Exo 2"', 'sans-serif'],
             sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
@@ -43,8 +66,14 @@
       }
     }
   </script>
+<<<<<<< HEAD
 
   <!-- Typographies Google Fonts -->
+=======
+   
+  </style>
+  <!-- Typographie propre et lisible -->
+>>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet"/>
@@ -82,6 +111,7 @@
       box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
       transform: translateY(-1px);
     }
+<<<<<<< HEAD
     .btn-clash-violet {
       background: linear-gradient(135deg, #9C27B0, #7B1FA2);
       color: #FFFFFF;
@@ -130,6 +160,12 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0A0A12; }
     ::-webkit-scrollbar-thumb { background: #FF6B00; border-radius: 9999px; }
+=======
+    .btn-connexion {
+  background: var(--couleur-principale);
+  color: var(--texte-sur-principale);
+  }
+>>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
   </style>
   {% block extra_head %}{% endblock %}
 </head>

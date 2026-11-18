@@ -27,8 +27,129 @@ CATEGORIES = [
     },
 ]
 
+<<<<<<< HEAD
 # Liste des établissements inscrits (vide jusqu'à inscription)
 ETABLISSEMENTS = []
+=======
+# ---------------------------------------------------------------------------
+# 2. ÉTABLISSEMENTS SCOLAIRES ET UNIVERSITAIRES (CÔTE D'IVOIRE)
+# ---------------------------------------------------------------------------
+ETABLISSEMENTS = [
+    {
+        'id': 1,
+        'nom': 'Lycée Classique d\'Abidjan (LCA)',
+        'commune': 'Cocody',
+        'ville': 'Abidjan',
+        'categorie_id': 2,
+    },
+    {
+        'id': 2,
+        'nom': 'Lycée Moderne de Cocody (LMC)',
+        'commune': 'Cocody',
+        'ville': 'Abidjan',
+        'categorie_id': 2,
+    },
+    {
+        'id': 3,
+        'nom': 'Lycée Municipal d\'Attécoubé',
+        'commune': 'Attécoubé',
+        'ville': 'Abidjan',
+        'categorie_id': 2,
+    },
+    {
+        'id': 4,
+        'nom': 'Collège Moderne du Plateau',
+        'commune': 'Plateau',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 5,
+        'nom': 'Collège Rodin Yopougon',
+        'commune': 'Yopougon',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 6,
+        'nom': 'Université Félix Houphouët-Boigny (UFHB)',
+        'commune': 'Cocody',
+        'ville': 'Abidjan',
+        'categorie_id': 3,
+    },
+    {
+        'id': 7,
+        'nom': 'Université Nangui Abrogoua (UNA)',
+        'commune': 'Abobo',
+        'ville': 'Abidjan',
+        'categorie_id': 3,
+    },
+    {
+        'id': 8,
+        'nom': 'Institut National Polytechnique Félix Houphouët-Boigny (INP-HB)',
+        'commune': 'Yamoussoukro',
+        'ville': 'Yamoussoukro',
+        'categorie_id': 3,
+    },
+    {
+        'id': 9,
+        'nom': "Ecole Multinationale Superieure des Postes d'Abidjan (EMSP)",
+        'commune': 'Treichville',
+        'ville': 'Abidjan',
+        'categorie_id': 3,
+    },
+    {
+        'id': 10,
+        'nom': "Lycée Moderne de Cocody Angre (LMCA)",
+        'commune': 'Cocody',
+        'ville': 'Abidjan',
+        'categorie_id': 2,
+    },
+    {
+        'id': 11,
+        'nom': "Collège Anador Abobo",
+        'commune': 'Abobo',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 12,
+        'nom': 'Lycée Moderne de Treichville',
+        'commune': 'Attécoubé',
+        'ville': 'Abidjan',
+        'categorie_id': 2,
+    },
+    {
+        'id': 13,
+        'nom': 'Collège Nanti Abobo',
+        'commune': 'Abobo',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 14,
+        'nom': 'Collège Privé Averroes',
+        'commune': 'Abobo',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 15,
+        'nom': 'Collège Sainte-Jeanne Abobo',
+        'commune': 'Abobo',
+        'ville': 'Abidjan',
+        'categorie_id': 1,
+    },
+    {
+        'id': 16,
+        'nom': 'Ecole Superieure Africaine de la technologie, de l\'information et de la communication (ESATIC)',
+        'commune': 'Treichville',
+        'ville': 'Abidjan',
+        'categorie_id': 3,
+    },
+
+]
+>>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
 
 # Liste des candidats (vide jusqu'à inscription)
 CANDIDATS = []
