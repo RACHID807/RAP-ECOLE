@@ -5,67 +5,76 @@
 <!--
   Page de profil d'un candidat : Option 3 de la maquette (Tech & Nuit, Cyan / Pink / Orange)
   Contient la photo de profil réelle en grand, le lecteur vidéo complet,
-  le lecteur audio interactif avec onde et les boutons de vote.
+  le lecteur audio interactif avec onde et les boutons de vote Wave à 500 FCFA.
+  Contrastes et lisibilité rehaussés pour le confort visuel.
 -->
-<div class="py-10 bg-[#0A0A12] min-h-screen">
+<div class="py-10 bg-[#0A0A14] min-h-screen">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Fil d'Ariane -->
-    <nav class="text-xs text-gray-400 mb-6 flex items-center gap-2">
-      <a href="{% url 'home' %}" class="hover:text-rcs-orange">Accueil</a>
-      <span>/</span>
-      <a href="{% url 'candidats' %}" class="hover:text-rcs-orange">Candidats</a>
-      <span>/</span>
+    <!-- Fil d'Ariane lisible -->
+    <nav class="text-xs text-slate-300 mb-6 flex items-center gap-2">
+      <a href="{% url 'home' %}" class="hover:text-rcs-orange transition-colors">Accueil</a>
+      <span class="text-slate-500">/</span>
+      <a href="{% url 'candidats' %}" class="hover:text-rcs-orange transition-colors">Candidats</a>
+      <span class="text-slate-500">/</span>
       <span class="text-white font-bold">{{ candidat.nom_artistique }}</span>
     </nav>
 
     <!-- Carte Profil Principale (Inspirée de Sushiraw sur la maquette Option 3) -->
-    <div class="carte-rcs p-6 md:p-8 border-rcs-border bg-gradient-to-r from-[#141426] via-[#10101E] to-[#0D0D18] mb-8">
+    <div class="carte-rcs p-6 md:p-8 border-rcs-border bg-gradient-to-r from-[#16162E] via-[#131326] to-[#0E0E1C] mb-8 shadow-xl">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-rcs-border">
 
         <!-- Photo de profil avec halo néon cyan / rose -->
         <div class="flex flex-col sm:flex-row items-center gap-6">
           <div class="relative">
+            {% if candidat.photo_url %}
             <img
               src="{{ candidat.photo_url }}"
               alt="{{ candidat.nom_artistique }}"
               class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-rcs-cyan shadow-glow-cyan"
             />
-            <span class="absolute bottom-1 right-2 px-2.5 py-0.5 rounded-full bg-rcs-green text-black font-clash font-black text-xs shadow-glow-green">
-              #{{ candidat.rang }}
+            {% else %}
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-slate-800 border-4 border-rcs-cyan flex items-center justify-center text-rcs-cyan font-clash font-bold text-3xl shadow-glow-cyan">
+              {{ candidat.nom_artistique|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <span class="absolute bottom-1 right-2 px-3 py-1 rounded-full bg-rcs-green text-slate-950 font-clash font-black text-xs shadow-glow-green">
+              #{{ candidat.rang|default:'1' }}
             </span>
           </div>
 
           <div class="text-center sm:text-left">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               <span class="px-3 py-0.5 rounded-full bg-rcs-violet/30 border border-rcs-violet/50 text-rcs-violet text-xs font-bold uppercase tracking-wider">
-                {{ candidat.categorie.nom }}
+                {{ candidat.categorie.nom|default:'Compétition' }}
               </span>
+              {% if candidat.style %}
               <span class="px-3 py-0.5 rounded-full bg-rcs-orange/20 border border-rcs-orange/40 text-rcs-orange text-xs font-bold uppercase">
                 {{ candidat.style }}
               </span>
+              {% endif %}
             </div>
 
             <h1 class="text-4xl md:text-5xl font-clash font-extrabold text-white tracking-wider">
               {{ candidat.nom_artistique }}
             </h1>
-            <p class="text-xs text-gray-400 mt-1">
-              {{ candidat.prenom }} {{ candidat.nom }} · {{ candidat.age }} ans · Candidat certifié RCS
+            <p class="text-xs text-slate-300 mt-1">
+              {{ candidat.prenom }} {{ candidat.nom }} · Candidat certifié RCS
             </p>
-            <div class="text-xs text-gray-300 mt-2 font-medium">
+            <div class="text-xs text-slate-200 mt-2 font-medium">
               📍 <span class="text-white font-bold">{{ candidat.etablissement.nom }}</span> ({{ candidat.commune }} · {{ candidat.ville }})
             </div>
           </div>
         </div>
 
-        <!-- Compteur de voix & Bouton d'action CLASH NOW -->
+        <!-- Compteur de voix & Bouton d'action CLASH NOW (500 FCFA) -->
         <div class="text-center md:text-right flex flex-col items-center md:items-end gap-3">
-          <div class="bg-[#0C0C16] border border-rcs-border px-6 py-3 rounded-2xl">
-            <span class="text-[11px] font-bold uppercase text-gray-400 block tracking-wider">Suffrages RCS</span>
+          <div class="bg-[#0C0C18] border border-rcs-border px-6 py-3 rounded-2xl shadow-inner">
+            <span class="text-[11px] font-bold uppercase text-slate-300 block tracking-wider">Suffrages RCS</span>
             <span class="text-3xl font-clash font-black text-rcs-gold">{{ candidat.votes }}</span>
           </div>
-          <a href="{% url 'vote' candidat.id %}" class="btn-clash-pink text-sm w-full md:w-auto px-8 py-3">
-            <span>🔥</span> CLASH NOW (Voter)
+          <a href="{% url 'vote' candidat.id %}" class="btn-clash-pink text-sm w-full md:w-auto px-8 py-3.5 font-clash font-bold">
+            <span>🔥</span> CLASH NOW (Voter 500 F)
           </a>
         </div>
 
@@ -73,20 +82,20 @@
 
       <!-- Résumé Biographie -->
       <div class="pt-6">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 font-clash">À propos du rappeur :</h3>
-        <p class="text-sm text-gray-300 leading-relaxed font-normal">
-          {{ candidat.bio }}
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 font-clash">À propos du rappeur :</h3>
+        <p class="text-sm text-slate-200 leading-relaxed font-normal">
+          {{ candidat.bio|default:"Candidat officiel représentant son établissement dans l'arène RAP CLASH SCHOOL Côte d'Ivoire 2026." }}
         </p>
       </div>
     </div>
 
-    <!-- Section Médias : Lecteur Vidéo & Lecteur Audio (Comme demandé par l'utilisateur) -->
+    <!-- Section Médias : Lecteur Vidéo & Lecteur Audio -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
 
       <!-- ================================================================= -->
       <!-- 1. LECTEUR VIDÉO DU CANDIDAT                                      -->
       <!-- ================================================================= -->
-      <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between">
+      <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between bg-[#131326] shadow-xl">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-rcs-border mb-4">
             <div class="flex items-center gap-2">
@@ -95,13 +104,14 @@
                 Vidéo de Prestation & Clash
               </h2>
             </div>
-            <span class="text-[11px] text-gray-400">Format MP4 HD</span>
+            <span class="text-[11px] text-slate-300">Format MP4 HD</span>
           </div>
 
-          <h3 class="text-sm font-bold text-white mb-2">{{ candidat.video_titre }}</h3>
+          <h3 class="text-sm font-bold text-white mb-2">{{ candidat.video_titre|default:"Vidéo officielle de clash" }}</h3>
 
           <!-- Balise Vidéo HTML5 fonctionnelle avec contrôles -->
           <div class="relative rounded-2xl overflow-hidden border border-rcs-border bg-black shadow-glow-violet">
+            {% if candidat.video_url %}
             <video
               controls
               poster="{{ candidat.video_poster }}"
@@ -110,21 +120,29 @@
               <source src="{{ candidat.video_url }}" type="video/mp4" />
               Votre navigateur ne prend pas en charge la lecture de vidéos.
             </video>
+            {% else %}
+            <div class="w-full h-64 md:h-72 flex flex-col items-center justify-center p-6 text-center text-slate-400 bg-slate-900/60">
+              <span class="text-4xl mb-2">🎬</span>
+              <p class="font-bold text-slate-200">Vidéo en cours de traitement</p>
+              <p class="text-xs text-slate-400 mt-1">L'extrait vidéo de clash de {{ candidat.nom_artistique }} sera disponible très bientôt.</p>
+            </div>
+            {% endif %}
           </div>
         </div>
 
-        <p class="text-[11px] text-gray-400 mt-4 text-center">
+        <p class="text-[11px] text-slate-300 mt-4 text-center">
           🎬 Vidéo officielle soumise par {{ candidat.nom_artistique }} pour la compétition.
         </p>
       </div>
 
       <!-- ================================================================= -->
-      <!-- 2. LECTEUR AUDIO AVEC FORME D'ONDE (STYLE SUSHIRAW OPTION 3)      -->
+      <!-- 2. LECTEUR AUDIO AVEC FORME D'ONDE                                -->
       <!-- ================================================================= -->
-      <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between" x-data="{
+      <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between bg-[#131326] shadow-xl" x-data="{
         enLecture: false,
         toggleAudio() {
           const audio = this.$refs.audioTag;
+          if (!audio) return;
           if (this.enLecture) {
             audio.pause();
             this.enLecture = false;
@@ -142,29 +160,31 @@
                 Extrait Audio de Qualification
               </h2>
             </div>
-            <span class="text-[11px] text-gray-400">Studio Master</span>
+            <span class="text-[11px] text-slate-300">Studio Master</span>
           </div>
 
-          <h3 class="text-sm font-bold text-white mb-1">« {{ candidat.audio_titre }} »</h3>
-          <p class="text-xs text-gray-400 mb-6">Enregistrement audio par {{ candidat.nom_artistique }}</p>
+          <h3 class="text-sm font-bold text-white mb-1">« {{ candidat.audio_titre|default:"Freestyle scolaire" }} »</h3>
+          <p class="text-xs text-slate-300 mb-6">Enregistrement audio par {{ candidat.nom_artistique }}</p>
 
-          <!-- Forme d'onde visuelle comme sur la maquette Sushiraw -->
-          <div class="bg-[#0C0C16] border border-rcs-border p-6 rounded-2xl mb-6 flex flex-col items-center">
-            <div class="w-full flex items-center justify-center gap-1 h-16 mb-4">
-              <!-- Barres de l'onde sonore simulée -->
-              {% for h in "30,55,70,40,85,60,95,75,45,80,65,90,50,70,85,60,40,75,90,55,80,65,45,70,90,55,40,75,60,85,50,70"|slice:":24" %}
+          <!-- Forme d'onde visuelle -->
+          <div class="bg-[#0C0C18] border border-rcs-border p-6 rounded-2xl mb-6 flex flex-col items-center shadow-inner">
+            <div class="w-full flex items-center justify-center gap-1.5 h-16 mb-4">
+              <!-- Barres de l'onde sonore -->
+              {% for h in "30,55,70,40,85,60,95,75,45,80,65,90,50,70,85,60,40,75,90,55,80,65,45,70"|slice:":24" %}
               <div
                 class="w-1.5 rounded-full transition-all duration-200"
-                :class="enLecture ? 'bg-gradient-to-t from-rcs-cyan to-rcs-pink animate-pulse' : 'bg-gray-600'"
+                :class="enLecture ? 'bg-gradient-to-t from-rcs-cyan to-rcs-pink animate-pulse' : 'bg-slate-700'"
                 style="height: 45px;"
               ></div>
               {% endfor %}
             </div>
 
-            <!-- Lecteur Audio HTML5 connecté au bouton -->
-            <audio x-ref="audioTag" class="w-full">
+            <!-- Lecteur Audio HTML5 -->
+            {% if candidat.audio_url %}
+            <audio x-ref="audioTag" class="hidden">
               <source src="{{ candidat.audio_url }}" type="audio/mp3" />
             </audio>
+            {% endif %}
 
             <!-- Bouton central Play / Pause Néon -->
             <button
@@ -175,37 +195,37 @@
               <svg x-show="!enLecture" class="w-7 h-7 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               <svg x-show="enLecture" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
             </button>
-            <span class="text-xs text-gray-400 mt-2 font-semibold" x-text="enLecture ? 'En lecture...' : 'Cliquer pour écouter l\'extrait'">
+            <span class="text-xs text-slate-300 mt-2 font-semibold" x-text="enLecture ? 'En lecture...' : 'Cliquer pour écouter l\'extrait'">
               Cliquer pour écouter l'extrait
             </span>
           </div>
         </div>
 
-        <!-- Bouton de Vote rapide -->
-        <a href="{% url 'vote' candidat.id %}" class="btn-clash-orange w-full text-center text-xs py-3">
-          Soutenir {{ candidat.nom_artistique }} dans le Clash
+        <!-- Bouton de Vote Wave rapide -->
+        <a href="{% url 'vote' candidat.id %}" class="btn-clash-orange w-full text-center text-xs py-3 font-clash font-bold">
+          Soutenir {{ candidat.nom_artistique }} (Paiement Wave 500 F)
         </a>
       </div>
 
     </div>
 
     <!-- Bilan des duels & Historique -->
-    <div class="carte-rcs p-6 border-rcs-border">
+    <div class="carte-rcs p-6 border-rcs-border bg-[#131326] shadow-xl">
       <h3 class="text-sm font-clash font-bold text-white uppercase tracking-wider mb-4 border-b border-rcs-border pb-2">
         Statistiques de Clash en Compétition
       </h3>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-        <div class="p-4 rounded-xl bg-[#0C0C16] border border-rcs-border">
-          <span class="text-xs text-gray-400 uppercase font-semibold block mb-1">Clashs Gagnés</span>
-          <span class="text-3xl font-clash font-bold text-rcs-green">{{ candidat.stats.duels_gagnes }}</span>
+        <div class="p-4 rounded-xl bg-[#0C0C18] border border-rcs-border">
+          <span class="text-xs text-slate-300 uppercase font-semibold block mb-1">Clashs Gagnés</span>
+          <span class="text-3xl font-clash font-bold text-rcs-green">{{ candidat.stats.duels_gagnes|default:0 }}</span>
         </div>
-        <div class="p-4 rounded-xl bg-[#0C0C16] border border-rcs-border">
-          <span class="text-xs text-gray-400 uppercase font-semibold block mb-1">Défaites</span>
-          <span class="text-3xl font-clash font-bold text-gray-400">{{ candidat.stats.duels_perdus }}</span>
+        <div class="p-4 rounded-xl bg-[#0C0C18] border border-rcs-border">
+          <span class="text-xs text-slate-300 uppercase font-semibold block mb-1">Défaites</span>
+          <span class="text-3xl font-clash font-bold text-slate-400">{{ candidat.stats.duels_perdus|default:0 }}</span>
         </div>
-        <div class="p-4 rounded-xl bg-[#0C0C16] border border-rcs-border">
-          <span class="text-xs text-gray-400 uppercase font-semibold block mb-1">Taux de Victoire</span>
-          <span class="text-3xl font-clash font-bold text-rcs-cyan">{{ candidat.stats.taux_victoire }}%</span>
+        <div class="p-4 rounded-xl bg-[#0C0C18] border border-rcs-border">
+          <span class="text-xs text-slate-300 uppercase font-semibold block mb-1">Taux de Victoire</span>
+          <span class="text-3xl font-clash font-bold text-rcs-cyan">{{ candidat.stats.taux_victoire|default:0 }}%</span>
         </div>
       </div>
     </div>

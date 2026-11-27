@@ -27,10 +27,6 @@ CATEGORIES = [
     },
 ]
 
-<<<<<<< HEAD
-# Liste des établissements inscrits (vide jusqu'à inscription)
-ETABLISSEMENTS = []
-=======
 # ---------------------------------------------------------------------------
 # 2. ÉTABLISSEMENTS SCOLAIRES ET UNIVERSITAIRES (CÔTE D'IVOIRE)
 # ---------------------------------------------------------------------------
@@ -149,7 +145,6 @@ ETABLISSEMENTS = [
     },
 
 ]
->>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
 
 # Liste des candidats (vide jusqu'à inscription)
 CANDIDATS = []
@@ -157,37 +152,52 @@ CANDIDATS = []
 # Liste des duels / confrontations (vide jusqu'à programmation)
 DUELS = []
 
-# Formules de Vote Pass officielles pour Wave, Djamo et Orange Money
+# Lien officiel Wave CI pour les votes
+WAVE_PAY_URL = "https://pay.wave.com/m/M_ci_oFeZQRw9aDIm/c/ci/"
+
+# Message défilant officiel (modifiable)
+MESSAGE_DEFILANT = "information : bienvenue sur RAP CLASH SCHOOL , A Bientot pour les duels ."
+
+# Lien officiel WhatsApp Côte d'Ivoire (Numéro officiel du comité : +225 07 57 33 30 78)
+WHATSAPP_URL = "https://wa.me/2250757333078?text=Bonjour%20RAP%20CLASH%20SCHOOL%20CI"
+
+# Formules de Vote officielles - Prix de base 500 FCFA avec Wave direct
 VOTES_PACKAGES = [
     {
-        'id': 'pass_starter',
-        'nom': 'Vote Pass Starter',
+        'id': 'pass_solo',
+        'nom': 'Vote Solo Wave',
         'prix': 500,
         'devise': 'FCFA',
-        'votes': 10,
-        'couleur': '#FF6B00',
-        'avantages': ['10 votes instantanés', 'Paiement Wave / Djamo / Orange Money'],
-    },
-    {
-        'id': 'pass_vip',
-        'nom': 'Vote Pass VIP',
-        'prix': 2000,
-        'devise': 'FCFA',
-        'votes': 50,
-        'couleur': '#FFC107',
+        'votes': 1,
+        'couleur': '#00E5FF',
         'populaire': True,
-        'avantages': ['50 votes instantanés', 'Badge VIP sur le profil'],
+        'avantages': ['1 vote officiel comptabilisé', 'Paiement Wave direct à 500 FCFA', 'Confirmation certifiée par email Brevo'],
     },
     {
-        'id': 'pass_champion',
-        'nom': 'Vote Pass Champion',
+        'id': 'pass_force',
+        'nom': 'Vote Force (Pack 5)',
+        'prix': 2500,
+        'devise': 'FCFA',
+        'votes': 5,
+        'couleur': '#FF6B00',
+        'avantages': ['5 votes crédités directement', 'Paiement Wave à 2 500 FCFA', 'Mise en avant du votant'],
+    },
+    {
+        'id': 'pass_choc',
+        'nom': 'Vote Maxi Clash (Pack 10)',
         'prix': 5000,
         'devise': 'FCFA',
-        'votes': 150,
-        'couleur': '#00E676',
-        'avantages': ['150 votes massifs', 'Mise en avant sur l\'écran live'],
+        'votes': 10,
+        'couleur': '#FFC107',
+        'avantages': ['10 votes d\'encouragement', 'Paiement Wave à 5 000 FCFA', 'Badge Super Supporter'],
     },
 ]
+
+# Liste des votes soumis (en attente ou validés par l'administration)
+VOTES = []
+
+# Liste des transactions validées
+TRANSACTIONS = []
 
 # Annonces officielles
 ANNONCES = []
@@ -270,3 +280,114 @@ def get_duel_by_id(duel_id):
 def get_all_duels_enriched():
     """Retourne la liste de tous les duels."""
     return [get_duel_by_id(d['id']) for d in DUELS if 'id' in d]
+
+
+def get_all_votes():
+    """Retourne l'ensemble des votes enregistrés (triés par date décroissante)."""
+    return sorted(VOTES, key=lambda v: v.get('id', 0), reverse=True)
+
+
+def get_vote_by_id(vote_id):
+    """Recherche un vote par son identifiant unique."""
+    for v in VOTES:
+        if v.get('id') == vote_id:
+            return v
+    return None
+
+
+def ajouter_vote(votant_nom, votant_email, votant_telephone, candidat_id, montant=500, nb_voix=1, methode='Wave CI'):
+    """Enregistre une nouvelle demande de vote soumise par un internaute."""
+    candidat = get_candidat_by_id(candidat_id)
+    candidat_nom = candidat.get('nom_artistique') if candidat else f"Candidat #{candidat_id}"
+
+    from datetime import datetime
+    maintenant = datetime.now()
+
+    vote_id = (VOTES[-1]['id'] + 1) if VOTES else 1
+    nouveau_vote = {
+        'id': vote_id,
+        'votant_nom': votant_nom.strip() or "Supporter Anonyme",
+        'votant_email': votant_email.strip(),
+        'votant_telephone': votant_telephone.strip(),
+        'candidat_id': candidat_id,
+        'candidat_nom': candidat_nom,
+        'montant': montant,
+        'voix': nb_voix,
+        'methode': methode,
+        'statut': 'en_attente',  # 'en_attente' ou 'valide'
+        'date_heure': maintenant.strftime("%d/%m/%Y à %H:%M:%S"),
+        'heure_precise': maintenant.strftime("%H:%M:%S"),
+        'date_validation': None,
+        'email_envoye': False,
+    }
+    VOTES.append(nouveau_vote)
+
+    # Persistance automatique dans la base de données
+    try:
+        from .db_service import sauvegarder_vote_db
+        sauvegarder_vote_db(
+            votant_nom=nouveau_vote['votant_nom'],
+            votant_email=nouveau_vote['votant_email'],
+            votant_telephone=nouveau_vote['votant_telephone'],
+            candidat_id=candidat_id,
+            montant=montant,
+            nb_voix=nb_voix,
+            methode=methode
+        )
+    except Exception as e:
+        print(f"[DB LOG] Synchronisation Vote DB : {e}")
+
+    return nouveau_vote
+
+
+def valider_vote_admin(vote_id):
+    """
+    Validation administrative du vote après vérification de l'heure et du numéro Wave.
+    Incrémente les voix du candidat, met à jour les stats et enregistre la transaction.
+    """
+    vote = get_vote_by_id(vote_id)
+    if not vote:
+        return False, "Vote introuvable."
+
+    if vote.get('statut') == 'valide':
+        return False, "Ce vote a déjà été validé."
+
+    from datetime import datetime
+    maintenant = datetime.now().strftime("%d/%m/%Y à %H:%M:%S")
+
+    # Mise à jour du vote
+    vote['statut'] = 'valide'
+    vote['date_validation'] = maintenant
+
+    # Crédit des voix au candidat
+    candidat = get_candidat_by_id(vote['candidat_id'])
+    if candidat:
+        candidat['votes'] = candidat.get('votes', 0) + vote.get('voix', 1)
+
+    # Mise à jour des statistiques globales
+    STATS_GENERALES['total_votes'] = STATS_GENERALES.get('total_votes', 0) + vote.get('voix', 1)
+    STATS_GENERALES['votes_premium'] = STATS_GENERALES.get('votes_premium', 0) + vote.get('voix', 1)
+    STATS_GENERALES['montant_transactions'] = STATS_GENERALES.get('montant_transactions', 0) + vote.get('montant', 500)
+
+    # Enregistrement de la transaction financière
+    transac_id = (TRANSACTIONS[-1]['id'] + 1) if TRANSACTIONS else 1
+    TRANSACTIONS.append({
+        'id': transac_id,
+        'reference': f"WAVE-{vote['id']:04d}-{vote['votant_telephone'][-4:] if len(vote['votant_telephone'])>=4 else '0000'}",
+        'candidat': vote['candidat_nom'],
+        'operateur': 'Wave CI',
+        'telephone': vote['votant_telephone'],
+        'montant': vote['montant'],
+        'date': maintenant,
+        'vote_id': vote['id'],
+    })
+
+    # Persistance de la validation en base de données
+    try:
+        from .db_service import valider_vote_db
+        valider_vote_db(vote_id)
+    except Exception as e:
+        print(f"[DB LOG] Validation Vote DB : {e}")
+
+    return True, "Vote validé avec succès."
+

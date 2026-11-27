@@ -2,54 +2,73 @@
 
 {% block admin_content %}
 <!--
-  Suivi comptable des contributions de soutien par opérateur (Wave, Orange Money, MTN MoMo, Moov).
-  Clarté financière pour les organisateurs et les établissements.
+  Suivi financier et contributions Mobile Money reçues (Wave, Orange Money, Djamo).
+  Palette ardoise douce reposante pour les yeux.
 -->
 <div class="space-y-6">
 
-  <div class="carte-blanche p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="carte-admin p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h1 class="text-xl font-bold text-gray-900">Suivi des contributions & Mobile Money</h1>
-      <p class="text-xs text-gray-600 mt-1">
-        Flux financiers des packs de soutien perçus par les réseaux ivoiriens.
+      <h1 class="text-xl font-bold text-slate-100">Suivi des contributions Mobile Money</h1>
+      <p class="text-xs text-slate-400 mt-1">
+        Historique certifié des transactions de soutien via Wave CI, Orange Money et Djamo.
       </p>
     </div>
     <div class="text-right">
-      <span class="text-xs text-gray-500 block">Total collecté (succès)</span>
-      <span class="text-2xl font-black text-ci-700">{{ total_montant }} FCFA</span>
+      <span class="text-xs text-slate-400 block">Total collecté</span>
+      <span class="text-xl font-extrabold text-amber-400">{{ total_montant }} FCFA</span>
     </div>
   </div>
 
-  <div class="carte-blanche bg-white overflow-hidden">
+  <!-- Grille des forfaits en vigueur -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {% for pkg in vote_packages %}
+    <div class="carte-admin p-4 flex items-center justify-between text-xs">
+      <div>
+        <span class="font-bold text-slate-200 block">{{ pkg.label }}</span>
+        <span class="text-emerald-400 font-extrabold">{{ pkg.voix }} voix</span>
+      </div>
+      <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 font-semibold text-slate-300">
+        {{ pkg.prix }} FCFA
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="carte-admin overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left text-xs">
-        <thead class="bg-gray-50 text-gray-600 uppercase border-b border-gray-200">
+        <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
           <tr>
-            <th class="px-6 py-3 font-semibold">Réf</th>
-            <th class="px-6 py-3 font-semibold">Candidat</th>
-            <th class="px-6 py-3 font-semibold">Formule</th>
-            <th class="px-6 py-3 font-semibold">Réseau / Opérateur</th>
+            <th class="px-6 py-3 font-semibold">Référence</th>
+            <th class="px-6 py-3 font-semibold">Candidat bénéficiaire</th>
+            <th class="px-6 py-3 font-semibold">Opérateur</th>
             <th class="px-6 py-3 font-semibold text-right">Montant</th>
-            <th class="px-6 py-3 font-semibold text-center">Statut</th>
-            <th class="px-6 py-3 font-semibold text-right">Date</th>
+            <th class="px-6 py-3 font-semibold text-right">Date & Heure</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-slate-700/50">
           {% for t in transactions %}
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 font-mono text-gray-500 text-[11px]">#TR-{{ t.id }}</td>
-            <td class="px-6 py-4 font-bold text-gray-900">{{ t.candidat }}</td>
-            <td class="px-6 py-4 text-gray-700">{{ t.pack }}</td>
-            <td class="px-6 py-4 text-gray-800 font-medium">{{ t.operateur }}</td>
-            <td class="px-6 py-4 text-right font-black text-ci-700">{{ t.montant }} FCFA</td>
-            <td class="px-6 py-4 text-center">
-              {% if t.statut == 'succes' %}
-              <span class="px-2 py-0.5 rounded bg-ci-50 text-ci-800 border border-ci-200 text-[10px] font-semibold">Validé</span>
-              {% else %}
-              <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[10px] font-semibold">En attente</span>
-              {% endif %}
+          <tr class="hover:bg-slate-750/50 transition-colors">
+            <td class="px-6 py-3 font-mono text-slate-400 text-[11px]">{{ t.reference }}</td>
+            <td class="px-6 py-3 font-bold text-slate-100">{{ t.candidat }}</td>
+            <td class="px-6 py-3 text-slate-300">{{ t.operateur }}</td>
+            <td class="px-6 py-3 text-right font-extrabold text-emerald-400">{{ t.montant }} FCFA</td>
+            <td class="px-6 py-3 text-right text-slate-400 text-[11px]">{{ t.date }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400 text-xs">
+              <div class="max-w-md mx-auto space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-400 mb-2">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="font-bold text-slate-200">Aucune contribution pour le moment</p>
+                <p class="text-slate-400">
+                  Les paiements réels initiés par les supporters apparaîtront ici avec leur référence officielle.
+                </p>
+              </div>
             </td>
-            <td class="px-6 py-4 text-right text-gray-500 text-[11px]">{{ t.date }}</td>
           </tr>
           {% endfor %}
         </tbody>

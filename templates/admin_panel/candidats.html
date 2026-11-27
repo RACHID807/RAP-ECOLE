@@ -4,6 +4,7 @@
 <!--
   Page de gestion des candidats par les administrateurs.
   Consultation, filtre et ajout de candidat avec modal Alpine.js.
+  Palette ardoise douce reposante pour les yeux.
 -->
 <div class="space-y-6" x-data="{
   modalAjout: false,
@@ -14,27 +15,27 @@
   }
 }">
 
-  <div class="carte-blanche p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="carte-admin p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h1 class="text-xl font-bold text-gray-900">Gestion des candidats</h1>
-      <p class="text-xs text-gray-600 mt-1">
+      <h1 class="text-xl font-bold text-slate-100">Gestion des candidats</h1>
+      <p class="text-xs text-slate-400 mt-1">
         Suivi des dossiers d'élèves et étudiants représentant les établissements de Côte d'Ivoire.
       </p>
     </div>
     <button
       type="button"
       @click="modalAjout = true"
-      class="btn-vert text-xs py-2 px-4 self-start sm:self-auto"
+      class="py-2 px-4 rounded-xl font-semibold text-xs text-slate-900 bg-emerald-400 hover:bg-emerald-300 transition-colors shadow-sm self-start sm:self-auto flex items-center gap-1.5"
     >
-      + Ajouter un candidat
+      <span>+ Ajouter un candidat</span>
     </button>
   </div>
 
   <!-- Tableau des candidats -->
-  <div class="carte-blanche bg-white overflow-hidden">
+  <div class="carte-admin overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left text-xs">
-        <thead class="bg-gray-50 text-gray-600 uppercase border-b border-gray-200">
+        <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
           <tr>
             <th class="px-6 py-3 font-semibold">Identité artistique</th>
             <th class="px-6 py-3 font-semibold">État civil</th>
@@ -44,29 +45,58 @@
             <th class="px-6 py-3 font-semibold text-right">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-slate-700/50">
           {% for c in candidats %}
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 font-bold text-gray-900">
+          <tr class="hover:bg-slate-750/50 transition-colors">
+            <td class="px-6 py-4 font-bold text-slate-100">
               {{ c.nom_artistique }}
+              <span class="block text-[11px] font-normal text-slate-400">Dossier #{{ c.id }}</span>
             </td>
-            <td class="px-6 py-4 text-gray-600">
-              {{ c.prenom }} {{ c.nom }} ({{ c.age }} ans)
+            <td class="px-6 py-4 text-slate-300">
+              {{ c.prenom }} {{ c.nom }}
             </td>
-            <td class="px-6 py-4 text-gray-700">
-              <span class="font-medium block">{{ c.etablissement.nom }}</span>
-              <span class="text-gray-400 text-[11px]">{{ c.commune }} · {{ c.ville }}</span>
+            <td class="px-6 py-4 text-slate-300">
+              {{ c.etablissement_nom }}
+              <span class="block text-[11px] text-slate-400">{{ c.commune }}</span>
             </td>
             <td class="px-6 py-4">
-              <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">
-                {{ c.categorie.nom }}
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                {{ c.categorie_nom }}
               </span>
             </td>
-            <td class="px-6 py-4 text-right font-black text-ci-700">
+            <td class="px-6 py-4 text-right font-extrabold text-emerald-400 text-sm">
               {{ c.votes }}
             </td>
-            <td class="px-6 py-4 text-right space-x-2">
-              <a href="{% url 'candidat_detail' c.id %}" class="text-ci-700 hover:underline font-semibold">Fiche</a>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <a
+                  href="{% url 'candidat_detail' c.id %}"
+                  class="px-2.5 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors"
+                >
+                  Fiche publique
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-slate-400 text-xs">
+              <div class="max-w-md mx-auto space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-400">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+                <p class="font-bold text-slate-200">Aucun candidat dans le registre</p>
+                <p class="text-slate-400">
+                  Les inscriptions reçues via le formulaire public ou ajoutées manuellement apparaîtront ici.
+                </p>
+                <button
+                  type="button"
+                  @click="modalAjout = true"
+                  class="py-2 px-4 rounded-xl font-semibold text-xs text-slate-900 bg-emerald-400 hover:bg-emerald-300 transition-colors shadow-sm"
+                >
+                  Ajouter le premier candidat
+                </button>
+              </div>
             </td>
           </tr>
           {% endfor %}
@@ -75,54 +105,93 @@
     </div>
   </div>
 
-  <!-- Modale d'ajout de candidat (Sobre et clair) -->
+  <!-- Modal d'ajout de candidat (Thème ardoise feutré) -->
   <div
     x-show="modalAjout"
     x-transition
-    class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
-    @click.self="modalAjout = false"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+    style="display: none;"
   >
-    <div class="bg-white rounded-lg border border-gray-200 p-6 max-w-lg w-full shadow-lg" @click.stop>
-      <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4">
-        <h3 class="font-bold text-gray-900 text-base">Enregistrer une nouvelle candidature</h3>
-        <button type="button" @click="modalAjout = false" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
+    <div
+      @click.away="modalAjout = false"
+      class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4"
+    >
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-bold text-slate-100 text-sm">Enregistrer un candidat</h3>
+        <button @click="modalAjout = false" class="text-slate-400 hover:text-slate-200 text-lg">✕</button>
       </div>
 
-      <form @submit.prevent="enregistrer()" class="space-y-4 text-xs">
+      <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">Nom de scène / artistique</label>
-          <input type="text" x-model="nouveauCandidat.nom_artistique" required class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none" />
+          <label class="block text-slate-300 font-medium mb-1">Nom d'artiste</label>
+          <input
+            type="text"
+            x-model="nouveauCandidat.nom_artistique"
+            placeholder="Ex: MC Plateau, La Flèche..."
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          />
         </div>
-
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-semibold text-gray-700 mb-1">Prénom</label>
-            <input type="text" x-model="nouveauCandidat.prenom" required class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none" />
+            <label class="block text-slate-300 font-medium mb-1">Prénom</label>
+            <input
+              type="text"
+              x-model="nouveauCandidat.prenom"
+              placeholder="Prénom de l'élève"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            />
           </div>
           <div>
-            <label class="block font-semibold text-gray-700 mb-1">Nom</label>
-            <input type="text" x-model="nouveauCandidat.nom" required class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none" />
+            <label class="block text-slate-300 font-medium mb-1">Nom</label>
+            <input
+              type="text"
+              x-model="nouveauCandidat.nom"
+              placeholder="Nom de famille"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            />
           </div>
         </div>
-
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">Établissement (Côte d'Ivoire)</label>
-          <select class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-ci-600 focus:outline-none bg-white">
-            {% for etab in etablissements %}
-            <option value="{{ etab.id }}">{{ etab.nom }} ({{ etab.commune }})</option>
+          <label class="block text-slate-300 font-medium mb-1">Établissement scolaire / universitaire</label>
+          <select
+            x-model="nouveauCandidat.etablissement"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          >
+            <option value="">Sélectionnez un établissement...</option>
+            {% for e in etablissements %}
+            <option value="{{ e.id }}">{{ e.nom }} ({{ e.commune }})</option>
             {% endfor %}
           </select>
         </div>
-
-        <div class="pt-3 border-t border-gray-100 flex justify-end gap-2">
-          <button type="button" @click="modalAjout = false" class="btn-blanc text-xs py-2 px-4">
-            Annuler
-          </button>
-          <button type="submit" class="btn-vert text-xs py-2 px-4">
-            Enregistrer le candidat
-          </button>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Catégorie</label>
+          <select
+            x-model="nouveauCandidat.categorie"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          >
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.nom }}</option>
+            {% endfor %}
+          </select>
         </div>
-      </form>
+      </div>
+
+      <div class="pt-3 border-t border-slate-700/60 flex items-center justify-end gap-2 text-xs">
+        <button
+          type="button"
+          @click="modalAjout = false"
+          class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-650 text-slate-300"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          @click="enregistrer()"
+          class="px-4 py-2 rounded-lg font-semibold text-slate-900 bg-emerald-400 hover:bg-emerald-300"
+        >
+          Enregistrer le dossier
+        </button>
+      </div>
     </div>
   </div>
 

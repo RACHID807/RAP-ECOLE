@@ -1,252 +1,310 @@
 {% extends 'base.html' %}
-{% block title %}Vote Pass — Soutenir {{ candidat.nom_artistique }} | RAP CLASH SCHOOL{% endblock %}
+{% block title %}Vote Pass Wave (500 FCFA) — Soutenir {{ candidat.nom_artistique }} | RAP CLASH SCHOOL{% endblock %}
 
 {% block content %}
 <!--
-  Page de Vote : Vote Pass & Paiement Mobile Money comme sur la maquette (Wave, Djamo, Orange Money).
+  Page de Vote Officielle Wave CI (500 FCFA)
+  Validation administrative basée sur le numéro de téléphone et l'heure du paiement,
+  avec notification automatique par courriel via Brevo (rap.ivoire.ecole@gmail.com).
 -->
-<div class="py-12 bg-[#0A0A12] min-h-screen" x-data="{
-  modeVote: 'pack',
-  packSelectionne: null,
-  operateur: 'wave',
-  numeroTelephone: '',
-  modalPaiement: false,
-  paiementReussi: false,
-  voteGratuitEffectue: false,
-  ouvrirModal(nom, prix) {
-    this.packSelectionne = { nom: nom, prix: prix };
-    this.modalPaiement = true;
-    this.paiementReussi = false;
-  },
-  validerPaiement() {
-    if (!this.numeroTelephone) {
-      alert('Veuillez renseigner votre numéro Mobile Money');
-      return;
-    }
-    this.paiementReussi = true;
+<div class="py-12 bg-[#0A0A14] min-h-screen" x-data="{
+  packChoisi: '{{ vote_packages.0.id|default:'pass_solo' }}',
+  nomPack: '{{ vote_packages.0.nom|default:'Vote Solo Wave' }}',
+  prixPack: {{ vote_packages.0.prix|default:500 }},
+  voixPack: {{ vote_packages.0.votes|default:1 }},
+  etape: 1,
+  selectionnerPack(id, nom, prix, voix) {
+    this.packChoisi = id;
+    this.nomPack = nom;
+    this.prixPack = prix;
+    this.voixPack = voix;
   }
 }">
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Fil d'Ariane -->
-    <nav class="text-xs text-gray-400 mb-6 flex items-center gap-2">
-      <a href="{% url 'home' %}" class="hover:text-rcs-orange">Accueil</a>
-      <span>/</span>
-      <a href="{% url 'candidats' %}" class="hover:text-rcs-orange">Rappeurs</a>
-      <span>/</span>
-      <span class="text-white font-bold">Vote Pass</span>
+    <!-- Fil d'Ariane lisible -->
+    <nav class="text-xs text-slate-300 mb-6 flex items-center gap-2">
+      <a href="{% url 'home' %}" class="hover:text-rcs-orange transition-colors">Accueil</a>
+      <span class="text-slate-500">/</span>
+      <a href="{% url 'candidats' %}" class="hover:text-rcs-orange transition-colors">Rappeurs</a>
+      <span class="text-slate-500">/</span>
+      <span class="text-white font-bold">Vote Pass Wave (500 FCFA)</span>
     </nav>
 
-    <!-- En-tête Candidat soutenu avec sa vraie photo -->
-    <div class="carte-rcs p-6 border-rcs-border bg-gradient-to-r from-[#141426] via-[#10101E] to-[#0D0D18] mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <!-- Message de confirmation après soumission -->
+    {% if vote_enregistre %}
+    <div class="mb-8 p-6 rounded-2xl bg-emerald-950/70 border-2 border-emerald-500/80 shadow-glow-green text-center">
+      <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400 flex items-center justify-center text-2xl font-bold mx-auto mb-3">
+        ✓
+      </div>
+      <h2 class="text-2xl font-clash font-bold text-white mb-2">VOTE ENREGISTRÉ AVEC SUCCÈS !</h2>
+      <p class="text-sm text-slate-200 max-w-xl mx-auto leading-relaxed mb-4">
+        Merci <strong>{{ vote_enregistre.votant_nom }}</strong> ! Votre demande de vote de <strong>{{ vote_enregistre.voix }} voix</strong> ({{ vote_enregistre.montant }} FCFA) au profit de <strong>{{ vote_enregistre.candidat_nom }}</strong> a bien été transmise au comité.
+      </p>
+
+      <div class="max-w-md mx-auto bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 text-xs text-left space-y-2 mb-5">
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Numéro Wave déclaré :</span>
+          <span class="text-white font-bold">{{ vote_enregistre.votant_telephone }}</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Courriel de confirmation :</span>
+          <span class="text-rcs-cyan font-semibold">{{ vote_enregistre.votant_email }}</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Heure de soumission :</span>
+          <span class="text-slate-200">{{ vote_enregistre.date_heure }}</span>
+        </div>
+        <div class="flex justify-between pt-1">
+          <span class="text-slate-400">Statut du vote :</span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-950/70 text-amber-300 border border-amber-700/60">
+            ⏳ En attente de validation administrative
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 max-w-xl mx-auto text-xs text-slate-300 leading-relaxed mb-6">
+        ℹ️ <strong>Procédure de validation :</strong> L'administrateur pointe la réception de votre paiement Wave à l'aide de votre numéro de téléphone et de l'heure exacte. Dès validation, vos voix seront créditées en direct et vous recevrez un <strong>courriel officiel via Brevo</strong> depuis <em>rap.ivoire.ecole@gmail.com</em>.
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="{% url 'candidats' %}" class="btn-clash-orange text-xs py-2.5 px-6">
+          Voir les autres candidats
+        </a>
+        <a href="{% url 'classement' %}" class="px-5 py-2.5 rounded-xl border border-rcs-border text-xs font-bold text-slate-200 hover:border-rcs-gold hover:text-rcs-gold transition-colors">
+          Consulter le Leaderboard
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if erreur_vote %}
+    <div class="mb-6 p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-200 text-xs flex items-center gap-3">
+      <span class="text-lg">⚠️</span>
+      <span>{{ erreur_vote }}</span>
+    </div>
+    {% endif %}
+
+    <!-- En-tête Candidat soutenu avec sa photo et informations claires -->
+    <div class="carte-rcs p-6 border-rcs-border bg-gradient-to-r from-[#16162E] via-[#131326] to-[#0E0E1C] mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
       <div class="flex items-center gap-4">
+        {% if candidat.photo_url %}
         <img
           src="{{ candidat.photo_url }}"
           alt="{{ candidat.nom_artistique }}"
-          class="w-16 h-16 rounded-2xl object-cover border-2 border-rcs-orange shadow-glow-orange flex-shrink-0"
+          class="w-18 h-18 rounded-2xl object-cover border-2 border-rcs-orange shadow-glow-orange flex-shrink-0"
         />
+        {% else %}
+        <div class="w-16 h-16 rounded-2xl bg-slate-800 border-2 border-rcs-orange flex items-center justify-center text-rcs-orange font-clash font-bold text-xl shadow-glow-orange flex-shrink-0">
+          {{ candidat.nom_artistique|slice:":2"|upper }}
+        </div>
+        {% endif %}
+
         <div>
-          <span class="text-[10px] font-clash font-bold uppercase tracking-wider text-rcs-orange bg-rcs-orange/20 px-2 py-0.5 rounded">
+          <span class="text-[10px] font-clash font-bold uppercase tracking-wider text-rcs-orange bg-rcs-orange/20 px-2.5 py-1 rounded-md border border-rcs-orange/30 inline-block">
             Candidat #{{ candidat.id }}
           </span>
-          <h1 class="text-2xl font-clash font-bold text-white mt-1">{{ candidat.nom_artistique }}</h1>
-          <p class="text-xs text-gray-400">
+          <h1 class="text-2xl sm:text-3xl font-clash font-bold text-white mt-1">{{ candidat.nom_artistique }}</h1>
+          <p class="text-xs text-slate-300 font-medium">
             {{ candidat.etablissement.nom }} · {{ candidat.commune }} ({{ candidat.ville }})
           </p>
         </div>
       </div>
 
-      <div class="text-left sm:text-right">
-        <span class="text-xs text-gray-400 block font-semibold uppercase">Total des voix</span>
+      <div class="text-left sm:text-right bg-slate-900/60 p-3 sm:p-4 rounded-xl border border-slate-800">
+        <span class="text-xs text-slate-300 block font-semibold uppercase tracking-wider">Suffrages enregistrés</span>
         <span class="text-3xl font-clash font-black text-rcs-gold">{{ candidat.votes }}</span>
+        <span class="text-[11px] text-emerald-400 block font-medium">Voix certifiées</span>
       </div>
     </div>
 
-    <!-- Onglets de sélection du mode de vote -->
-    <div class="flex border-b border-rcs-border mb-8">
-      <button
-        type="button"
-        @click="modeVote = 'pack'"
-        :class="modeVote === 'pack' ? 'border-rcs-gold text-rcs-gold font-bold shadow-glow-orange' : 'border-transparent text-gray-400 hover:text-white'"
-        class="py-3 px-6 border-b-2 text-xs font-clash tracking-wider transition-colors"
-      >
-        Vote Pass (Wave · Djamo · Orange Money)
-      </button>
-      <button
-        type="button"
-        @click="modeVote = 'gratuit'"
-        :class="modeVote === 'gratuit' ? 'border-rcs-orange text-rcs-orange font-bold' : 'border-transparent text-gray-400 hover:text-white'"
-        class="py-3 px-6 border-b-2 text-xs font-clash tracking-wider transition-colors"
-      >
-        Vote Quotidien Gratuit
-      </button>
-    </div>
-
     <!-- ===================================================================== -->
-    <!-- 1. VOTE PASS (EXACTEMENT LA BOÎTE NOIRE DE L'OPTION 2 DE L'IMAGE)      -->
+    <!-- ÉTAPES DU VOTE WAVE (CLAIREMENT DÉTAILLÉES)                           -->
     <!-- ===================================================================== -->
-    <div x-show="modeVote === 'pack'" class="space-y-6">
+    <div class="space-y-8">
 
-      <div class="text-center max-w-xl mx-auto mb-8">
-        <h2 class="text-3xl font-clash font-bold text-white tracking-wider">CHOISISSEZ VOTRE VOTE PASS</h2>
-        <p class="text-xs text-gray-400 mt-1">Paiement instantané Wave, Djamo et Orange Money Côte d'Ivoire</p>
+      <!-- Titre de section -->
+      <div class="text-center max-w-xl mx-auto">
+        <div class="inline-block px-3 py-1 rounded-full text-xs font-clash font-bold uppercase tracking-wider text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/30 mb-2">
+          Paiement Officiel Wave CI
+        </div>
+        <h2 class="text-3xl font-clash font-bold text-white tracking-wider">VOTEZ POUR {{ candidat.nom_artistique|upper }}</h2>
+        <p class="text-xs text-slate-300 mt-1">Vote unitaire officiel à 500 FCFA avec validation sécurisée</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <!-- Sélection du Pack de Vote (500 FCFA mis en avant) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {% for pack in vote_packages %}
-        <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between relative bg-[#121220] {% if pack.populaire %}border-rcs-gold shadow-glow-orange{% endif %}">
+        <div
+          @click="selectionnerPack('{{ pack.id }}', '{{ pack.nom }}', {{ pack.prix }}, {{ pack.votes }})"
+          :class="packChoisi === '{{ pack.id }}' ? 'border-[#00E5FF] shadow-glow-cyan bg-[#16162E]' : 'border-rcs-border bg-[#121220] hover:border-slate-600'"
+          class="carte-rcs p-5 cursor-pointer relative transition-all flex flex-col justify-between"
+        >
           {% if pack.populaire %}
-          <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-rcs-gold text-black font-clash font-bold text-[10px] tracking-wider uppercase">
-            POPULAIRE
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#00E5FF] text-slate-950 font-clash font-black text-[10px] tracking-wider uppercase shadow-md">
+            RECOMMANDE · 500 FCFA
           </span>
           {% endif %}
 
           <div>
-            <h3 class="font-clash font-bold text-white text-lg mb-2">{{ pack.nom }}</h3>
-            <div class="text-3xl font-clash font-black text-rcs-gold mb-1">
-              {{ pack.prix }} <span class="text-sm font-sans font-semibold text-gray-400">{{ pack.devise }}</span>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-clash font-bold text-white text-lg">{{ pack.nom }}</h3>
+              <div
+                :class="packChoisi === '{{ pack.id }}' ? 'border-[#00E5FF] bg-[#00E5FF]' : 'border-slate-600'"
+                class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+              >
+                <div x-show="packChoisi === '{{ pack.id }}'" class="w-2 h-2 rounded-full bg-slate-950"></div>
+              </div>
             </div>
-            <div class="text-xs font-bold text-rcs-orange mb-4">+{{ pack.votes }} voix directes au clash</div>
 
-            <ul class="text-xs text-gray-300 space-y-2 mb-6">
+            <div class="text-3xl font-clash font-black text-rcs-gold mb-1">
+              {{ pack.prix }} <span class="text-sm font-sans font-semibold text-slate-300">FCFA</span>
+            </div>
+            <div class="text-xs font-bold text-emerald-400 mb-4">+{{ pack.votes }} voix officielles</div>
+
+            <ul class="text-xs text-slate-300 space-y-2 mb-4">
               {% for av in pack.avantages %}
               <li class="flex items-start gap-1.5">
-                <span class="text-rcs-green font-bold">✓</span>
+                <span class="text-[#00E676] font-bold">✓</span>
                 <span>{{ av }}</span>
               </li>
               {% endfor %}
             </ul>
           </div>
 
-          <button
-            type="button"
-            @click="ouvrirModal('{{ pack.nom }}', '{{ pack.prix }}')"
-            class="btn-clash-orange w-full text-xs py-3"
-          >
-            Acheter le Pass
-          </button>
+          <div class="pt-3 border-t border-slate-800 text-center">
+            <span
+              :class="packChoisi === '{{ pack.id }}' ? 'text-[#00E5FF] font-bold' : 'text-slate-400'"
+              class="text-xs font-clash uppercase tracking-wider"
+            >
+              <span x-show="packChoisi === '{{ pack.id }}'">✓ Pack Sélectionné</span>
+              <span x-show="packChoisi !== '{{ pack.id }}'">Choisir ce pack</span>
+            </span>
+          </div>
         </div>
         {% endfor %}
       </div>
-    </div>
 
-    <!-- ===================================================================== -->
-    <!-- 2. VOTE GRATUIT                                                       -->
-    <!-- ===================================================================== -->
-    <div x-show="modeVote === 'gratuit'" class="carte-rcs p-8 border-rcs-border text-center max-w-xl mx-auto bg-[#121220]">
-      <h2 class="text-xl font-clash font-bold text-white mb-2">VOTE QUOTIDIEN GRATUIT</h2>
-      <p class="text-xs text-gray-400 mb-6">
-        Écoutez l'extrait de <strong>{{ candidat.nom_artistique }}</strong> pour valider votre voix journalière.
-      </p>
+      <!-- ================================================================= -->
+      <!-- CADRE DE VALIDATION : ÉTAPE 1 (LIEN WAVE) + ÉTAPE 2 (FORMULAIRE)   -->
+      <!-- ================================================================= -->
+      <div class="carte-rcs p-6 sm:p-8 border-2 border-rcs-border bg-[#101020] rounded-2xl shadow-2xl">
 
-      <div class="bg-[#0C0C16] p-4 rounded-xl border border-rcs-border text-left mb-6">
-        <div class="text-xs font-bold text-white mb-1">Titre : « {{ candidat.audio_titre }} »</div>
-        <audio controls class="w-full h-8 mt-2">
-          <source src="{{ candidat.audio_url }}" type="audio/mp3" />
-        </audio>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-      <div x-show="!voteGratuitEffectue">
-        <button
-          type="button"
-          @click="voteGratuitEffectue = true"
-          class="btn-clash-pink w-full py-3 text-sm"
-        >
-          Confirmer mon vote gratuit (1 par jour)
-        </button>
-      </div>
+          <!-- Colonne 1 : Lien et Consignes Wave -->
+          <div class="space-y-5 border-b md:border-b-0 md:border-r border-slate-800 pb-6 md:pb-0 md:pr-6">
+            <div>
+              <span class="px-2.5 py-1 rounded bg-[#00E5FF]/10 text-[#00E5FF] text-xs font-bold uppercase tracking-wider border border-[#00E5FF]/30">
+                Étape 1 sur 2
+              </span>
+              <h3 class="text-xl font-clash font-bold text-white mt-2">Effectuez le paiement Wave</h3>
+              <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                Cliquez ci-dessous pour ouvrir le lien officiel de paiement Wave CI et régler <span class="text-rcs-gold font-bold" x-text="prixPack + ' FCFA'"></span>.
+              </p>
+            </div>
 
-      <div x-show="voteGratuitEffectue" class="p-4 rounded-xl bg-rcs-green/20 border border-rcs-green text-rcs-green text-xs font-bold">
-        ✓ Votre vote gratuit a été attribué avec succès à {{ candidat.nom_artistique }} !
-      </div>
-    </div>
+            <!-- Bouton direct vers le lien Wave fourni -->
+            <a
+              href="{{ wave_pay_url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full py-4 px-6 rounded-xl font-clash font-bold text-base text-slate-950 bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:from-[#38EFFF] hover:to-[#00C4EE] shadow-glow-cyan transition-all flex items-center justify-center gap-3 text-center"
+            >
+              <span>🔗 OUVRIR WAVE POUR PAYER</span>
+              <span class="px-2.5 py-0.5 rounded bg-black/20 text-xs font-sans font-bold" x-text="prixPack + ' FCFA'"></span>
+            </a>
 
-  </div>
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-2">
+              <div class="font-bold text-white flex items-center gap-2">
+                <span>📱 Lien officiel :</span>
+                <span class="text-[#00E5FF] font-mono text-[11px] truncate">pay.wave.com/m/M_ci_oFeZQRw9aDIm</span>
+              </div>
+              <p class="text-[11px] text-slate-400">
+                Une fois le paiement effectué sur l'application Wave, complétez le formulaire ci-contre avec votre numéro et courriel.
+              </p>
+            </div>
+          </div>
 
-  <!-- ===================================================================== -->
-  <!-- MODAL DE PAIEMENT VOTE PASS (EXACTEMENT LA BOX VOTE PASS DE L'IMAGE)   -->
-  <!-- ===================================================================== -->
-  <div
-    x-show="modalPaiement"
-    x-transition
-    class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-    @click.self="modalPaiement = false"
-  >
-    <!-- Boîte Noire et Or de l'image "Vote Pass" -->
-    <div class="bg-[#0A0A12] border-2 border-rcs-gold rounded-2xl p-6 md:p-8 max-w-sm w-full shadow-glow-orange text-center relative" @click.stop>
+          <!-- Colonne 2 : Formulaire de confirmation pour l'administration -->
+          <div class="space-y-5">
+            <div>
+              <span class="px-2.5 py-1 rounded bg-rcs-orange/10 text-rcs-orange text-xs font-bold uppercase tracking-wider border border-rcs-orange/30">
+                Étape 2 sur 2
+              </span>
+              <h3 class="text-xl font-clash font-bold text-white mt-2">Confirmez votre vote</h3>
+              <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                Renseignez vos coordonnées de paiement afin que l'administrateur valide le vote et que Brevo vous envoie le courriel officiel.
+              </p>
+            </div>
 
-      <button type="button" @click="modalPaiement = false" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
-        ✕
-      </button>
+            <form method="POST" action="{% url 'vote' candidat.id %}" class="space-y-4">
+              {% csrf_token %}
+              <input type="hidden" name="package_id" :value="packChoisi"/>
 
-      <h3 class="font-clash font-extrabold text-2xl text-white mb-1">VOTE PASS</h3>
-      <p class="text-[11px] text-gray-400 mb-4">Paiement sécurisé instantané · Compteur live</p>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Nom et Prénom du votant
+                </label>
+                <input
+                  type="text"
+                  name="votant_nom"
+                  required
+                  placeholder="Ex: Jean Kouadio"
+                  class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]"
+                />
+              </div>
 
-      <div class="p-3 bg-[#161628] rounded-xl border border-rcs-border text-xs mb-5">
-        <div class="text-gray-400" x-text="packSelectionne?.nom"></div>
-        <div class="text-2xl font-clash font-black text-rcs-gold" x-text="packSelectionne?.prix + ' FCFA'"></div>
-        <div class="text-[10px] text-rcs-orange font-bold mt-1">Au profit de {{ candidat.nom_artistique }}</div>
-      </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Numéro de téléphone utilisé sur Wave (+225)
+                </label>
+                <input
+                  type="tel"
+                  name="votant_telephone"
+                  required
+                  placeholder="Ex: 07 00 00 00 00"
+                  class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]"
+                />
+                <span class="text-[10px] text-slate-400 block mt-1">
+                  Ce numéro servira à l'administrateur pour pointer l'heure et la transaction Wave.
+                </span>
+              </div>
 
-      <div x-show="!paiementReussi">
-        <!-- 3 Opérateurs comme sur la maquette : Wave, Djamo, Orange Money -->
-        <div class="grid grid-cols-3 gap-2 mb-4">
-          <button
-            type="button"
-            @click="operateur = 'wave'"
-            :class="operateur === 'wave' ? 'border-rcs-cyan bg-[#1D3557] text-[#00E5FF] font-bold shadow-glow-cyan' : 'border-rcs-border bg-[#121220] text-gray-400'"
-            class="p-2.5 rounded-xl border text-[11px] transition-all"
-          >
-            Wave
-          </button>
-          <button
-            type="button"
-            @click="operateur = 'djamo'"
-            :class="operateur === 'djamo' ? 'border-rcs-gold bg-[#2A0845] text-rcs-gold font-bold shadow-glow-orange' : 'border-rcs-border bg-[#121220] text-gray-400'"
-            class="p-2.5 rounded-xl border text-[11px] transition-all"
-          >
-            Djamo
-          </button>
-          <button
-            type="button"
-            @click="operateur = 'orange'"
-            :class="operateur === 'orange' ? 'border-rcs-orange bg-[#FF6B00]/20 text-rcs-orange font-bold shadow-glow-orange' : 'border-rcs-border bg-[#121220] text-gray-400'"
-            class="p-2.5 rounded-xl border text-[11px] transition-all"
-          >
-            Orange
-          </button>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Adresse courriel (pour la notification Brevo)
+                </label>
+                <input
+                  type="email"
+                  name="votant_email"
+                  required
+                  placeholder="Ex: votant@gmail.com"
+                  class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]"
+                />
+                <span class="text-[10px] text-slate-400 block mt-1">
+                  Un email vous sera expédié depuis <strong>rap.ivoire.ecole@gmail.com</strong> dès validation.
+                </span>
+              </div>
+
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="btn-clash-orange w-full py-3.5 text-xs font-clash tracking-wider uppercase font-bold"
+                >
+                  ✓ J'ai payé sur Wave · Valider mon vote
+                </button>
+              </div>
+            </form>
+          </div>
+
         </div>
 
-        <div class="mb-5 text-left">
-          <label class="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Numéro Mobile Money (+225)</label>
-          <input
-            type="tel"
-            x-model="numeroTelephone"
-            placeholder="07 00 00 00 00"
-            class="w-full px-4 py-2.5 bg-[#121220] border border-rcs-border rounded-xl text-white text-xs focus:outline-none focus:border-rcs-gold"
-          />
-        </div>
-
-        <button
-          type="button"
-          @click="validerPaiement()"
-          class="btn-clash-orange w-full py-3 text-xs tracking-wider font-clash"
-        >
-          CONFIRMER & PAYER LE PASS
-        </button>
-      </div>
-
-      <div x-show="paiementReussi" class="py-4">
-        <div class="w-12 h-12 rounded-full bg-rcs-green/20 text-rcs-green flex items-center justify-center text-xl font-bold mx-auto mb-3">✓</div>
-        <h4 class="font-clash font-bold text-white text-lg">VOTE ENREGISTRÉ !</h4>
-        <p class="text-xs text-gray-400 mt-1 mb-4">Votre soutien a été crédité en direct au score du rappeur.</p>
-        <button type="button" @click="modalPaiement = false" class="btn-clash-orange text-xs py-2 px-6">
-          Terminer
-        </button>
       </div>
 
     </div>
+
   </div>
 
 </div>

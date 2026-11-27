@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Leaderboard — RAP CLASH SCHOOL (RCS){% endblock %}
+{% block title %}Leaderboard — RAP CLASH SCHOOL (RCS) Côte d'Ivoire{% endblock %}
 
 {% block content %}
 <!--
   Page de classement : Option 2 de la maquette (Victoire & Cash / Or #FFC107 & Vert #00E676)
-  Gère proprement l'affichage du podium quand il y a des candidats ou l'état vide.
+  Contrastes et lisibilité rehaussés pour une lecture facile et reposante.
 -->
-<div class="py-12 bg-[#0A0A12] min-h-screen" x-data="{ onglet: 'tous' }">
+<div class="py-12 bg-[#0A0A14] min-h-screen" x-data="{ onglet: 'tous' }">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="text-center max-w-2xl mx-auto mb-10">
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rcs-gold/10 border border-rcs-gold/40 text-rcs-gold text-xs font-clash font-bold uppercase tracking-wider mb-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rcs-gold/15 border border-rcs-gold/40 text-rcs-gold text-xs font-clash font-bold uppercase tracking-wider mb-3 shadow-sm">
         👑 RCS CHAMPIONS
       </div>
       <h1 class="text-4xl md:text-5xl font-clash font-black text-white tracking-wider">
-        LEADERBOARD
+        LEADERBOARD OFFICIEL
       </h1>
-      <p class="text-xs text-gray-400 mt-2">
+      <p class="text-xs text-slate-300 mt-2 font-medium">
         Les champions de la compétition scolaire et universitaire de Côte d'Ivoire
       </p>
     </div>
@@ -26,32 +26,32 @@
       <button
         type="button"
         @click="onglet = 'tous'"
-        :class="onglet === 'tous' ? 'bg-rcs-gold text-black shadow-glow-orange' : 'bg-rcs-card text-gray-400 border border-rcs-border'"
-        class="px-5 py-2.5 rounded-xl text-xs font-clash font-bold"
+        :class="onglet === 'tous' ? 'bg-rcs-gold text-slate-950 shadow-glow-orange font-bold' : 'bg-[#141428] text-slate-300 border border-rcs-border hover:text-white'"
+        class="px-5 py-2.5 rounded-xl text-xs font-clash transition-all"
       >
         Classement Général
       </button>
       <button
         type="button"
         @click="onglet = 'college'"
-        :class="onglet === 'college' ? 'bg-rcs-green text-black shadow-glow-green' : 'bg-rcs-card text-gray-400 border border-rcs-border'"
-        class="px-5 py-2.5 rounded-xl text-xs font-clash font-bold"
+        :class="onglet === 'college' ? 'bg-rcs-green text-slate-950 shadow-glow-green font-bold' : 'bg-[#141428] text-slate-300 border border-rcs-border hover:text-white'"
+        class="px-5 py-2.5 rounded-xl text-xs font-clash transition-all"
       >
         Collèges
       </button>
       <button
         type="button"
         @click="onglet = 'lycee'"
-        :class="onglet === 'lycee' ? 'bg-rcs-orange text-white shadow-glow-orange' : 'bg-rcs-card text-gray-400 border border-rcs-border'"
-        class="px-5 py-2.5 rounded-xl text-xs font-clash font-bold"
+        :class="onglet === 'lycee' ? 'bg-rcs-orange text-white shadow-glow-orange font-bold' : 'bg-[#141428] text-slate-300 border border-rcs-border hover:text-white'"
+        class="px-5 py-2.5 rounded-xl text-xs font-clash transition-all"
       >
         Lycées
       </button>
       <button
         type="button"
         @click="onglet = 'universite'"
-        :class="onglet === 'universite' ? 'bg-rcs-violet text-white shadow-glow-violet' : 'bg-rcs-card text-gray-400 border border-rcs-border'"
-        class="px-5 py-2.5 rounded-xl text-xs font-clash font-bold"
+        :class="onglet === 'universite' ? 'bg-rcs-violet text-white shadow-glow-violet font-bold' : 'bg-[#141428] text-slate-300 border border-rcs-border hover:text-white'"
+        class="px-5 py-2.5 rounded-xl text-xs font-clash transition-all"
       >
         Universités
       </button>
@@ -59,7 +59,7 @@
 
     {% if candidats %}
       <!-- PODIUM DES CHAMPIONS -->
-      <div x-show="onglet === 'tous'" class="carte-rcs p-8 border-rcs-gold/40 bg-gradient-to-b from-[#1C1828] via-[#121220] to-[#0A0A12] mb-12 relative overflow-hidden">
+      <div x-show="onglet === 'tous'" class="carte-rcs p-8 border-rcs-gold/40 bg-gradient-to-b from-[#1C1832] via-[#131326] to-[#0A0A14] mb-12 relative overflow-hidden shadow-2xl">
         <div class="text-center font-clash font-bold text-rcs-gold text-sm uppercase tracking-widest mb-8">
           RCS Champions
         </div>
@@ -68,46 +68,40 @@
           <!-- 2ème Place -->
           {% if candidats|length >= 2 %}
           {% with c=candidats.1 %}
-          <div class="flex flex-col items-center text-center">
-            <span class="text-xl mb-1">🥈</span>
+          <div class="text-center flex flex-col items-center">
             <div class="relative mb-2">
               <img
-                src="{{ c.photo_url|default:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80' }}"
+                src="{{ c.photo_url }}"
                 alt="{{ c.nom_artistique }}"
-                class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-gray-300 shadow-lg"
+                class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-slate-400 shadow-md"
               />
+              <span class="absolute -top-2 -right-1 w-7 h-7 rounded-full bg-slate-300 text-slate-950 font-clash font-black text-xs flex items-center justify-center border-2 border-[#121220]">
+                2
+              </span>
             </div>
-            <h3 class="font-clash font-bold text-white text-base md:text-lg">{{ c.nom_artistique }}</h3>
-            <p class="text-[11px] text-gray-400 truncate max-w-[120px]">{{ c.etablissement.nom|default:'' }}</p>
-            <div class="text-base font-clash font-extrabold text-gray-300 mt-1">{{ c.votes }}</div>
-            <div class="w-24 md:w-28 h-16 bg-[#18182C] border-t-2 border-gray-400 rounded-t-xl mt-2 flex items-center justify-center font-clash font-black text-gray-400 text-lg">
-              #2
-            </div>
+            <h3 class="font-clash font-bold text-white text-sm md:text-base">{{ c.nom_artistique }}</h3>
+            <span class="text-xs text-rcs-orange font-clash font-extrabold">{{ c.votes }} voix</span>
           </div>
           {% endwith %}
           {% endif %}
 
-          <!-- 1ère Place -->
+          <!-- 1ère Place (Vainqueur Or) -->
           {% if candidats|length >= 1 %}
           {% with c=candidats.0 %}
-          <div class="flex flex-col items-center text-center -mb-2">
-            <span class="text-3xl mb-1 animate-bounce">👑</span>
+          <div class="text-center flex flex-col items-center -translate-y-4">
+            <div class="text-2xl mb-1">👑</div>
             <div class="relative mb-2">
               <img
-                src="{{ c.photo_url|default:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80' }}"
+                src="{{ c.photo_url }}"
                 alt="{{ c.nom_artistique }}"
                 class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-rcs-gold shadow-glow-orange"
               />
-              <span class="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full bg-rcs-gold text-black font-clash font-bold text-[10px]">
-                CHAMPION
+              <span class="absolute -top-2 -right-1 w-8 h-8 rounded-full bg-rcs-gold text-slate-950 font-clash font-black text-sm flex items-center justify-center border-2 border-[#121220]">
+                1
               </span>
             </div>
-            <h3 class="font-clash font-extrabold text-white text-lg md:text-xl">{{ c.nom_artistique }}</h3>
-            <p class="text-[11px] text-gray-300 truncate max-w-[140px]">{{ c.etablissement.nom|default:'' }}</p>
-            <div class="text-xl font-clash font-black text-rcs-gold mt-1">{{ c.votes }}</div>
-            <div class="w-28 md:w-36 h-24 bg-gradient-to-t from-rcs-gold/30 to-[#18182C] border-t-4 border-rcs-gold rounded-t-xl mt-2 flex items-center justify-center font-clash font-black text-rcs-gold text-2xl">
-              #1
-            </div>
+            <h3 class="font-clash font-extrabold text-rcs-gold text-base md:text-lg">{{ c.nom_artistique }}</h3>
+            <span class="text-sm text-rcs-green font-clash font-extrabold">{{ c.votes }} voix</span>
           </div>
           {% endwith %}
           {% endif %}
@@ -115,55 +109,46 @@
           <!-- 3ème Place -->
           {% if candidats|length >= 3 %}
           {% with c=candidats.2 %}
-          <div class="flex flex-col items-center text-center">
-            <span class="text-xl mb-1">🥉</span>
+          <div class="text-center flex flex-col items-center">
             <div class="relative mb-2">
               <img
-                src="{{ c.photo_url|default:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&auto=format&fit=crop&q=80' }}"
+                src="{{ c.photo_url }}"
                 alt="{{ c.nom_artistique }}"
-                class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-[#CD7F32] shadow-lg"
+                class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-[#CD7F32] shadow-md"
               />
+              <span class="absolute -top-2 -right-1 w-7 h-7 rounded-full bg-[#CD7F32] text-white font-clash font-black text-xs flex items-center justify-center border-2 border-[#121220]">
+                3
+              </span>
             </div>
-            <h3 class="font-clash font-bold text-white text-base md:text-lg">{{ c.nom_artistique }}</h3>
-            <p class="text-[11px] text-gray-400 truncate max-w-[120px]">{{ c.etablissement.nom|default:'' }}</p>
-            <div class="text-base font-clash font-extrabold text-[#CD7F32] mt-1">{{ c.votes }}</div>
-            <div class="w-24 md:w-28 h-12 bg-[#18182C] border-t-2 border-[#CD7F32] rounded-t-xl mt-2 flex items-center justify-center font-clash font-black text-[#CD7F32] text-lg">
-              #3
-            </div>
+            <h3 class="font-clash font-bold text-white text-sm md:text-base">{{ c.nom_artistique }}</h3>
+            <span class="text-xs text-rcs-orange font-clash font-extrabold">{{ c.votes }} voix</span>
           </div>
           {% endwith %}
           {% endif %}
         </div>
       </div>
 
-      <!-- Tableau Général des Scores -->
-      <div class="carte-rcs overflow-hidden bg-[#121220] border-rcs-border">
-        <div class="px-6 py-4 border-b border-rcs-border flex items-center justify-between">
-          <h2 class="text-base font-clash font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>📊</span> Tous les Rappeurs au Classement
-          </h2>
-          <span class="text-xs text-gray-400">Total : {{ candidats|length }}</span>
-        </div>
-
+      <!-- TABLEAU DU CLASSEMENT COMPLET (très lisible) -->
+      <div class="carte-rcs overflow-hidden bg-[#131326] shadow-xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-[#0C0C16] text-gray-400 uppercase font-clash tracking-wider border-b border-rcs-border">
+            <thead class="bg-[#0C0C18] text-slate-300 uppercase font-clash tracking-wider border-b border-rcs-border">
               <tr>
-                <th scope="col" class="px-6 py-3">Rang</th>
-                <th scope="col" class="px-6 py-3">Rappeur</th>
-                <th scope="col" class="px-6 py-3">Établissement</th>
-                <th scope="col" class="px-6 py-3">Niveau</th>
-                <th scope="col" class="px-6 py-3 text-right">Votes</th>
-                <th scope="col" class="px-6 py-3 text-right">Action</th>
+                <th scope="col" class="px-6 py-3 font-semibold">Rang</th>
+                <th scope="col" class="px-6 py-3 font-semibold">Rappeur</th>
+                <th scope="col" class="px-6 py-3 font-semibold">Établissement</th>
+                <th scope="col" class="px-6 py-3 font-semibold">Niveau</th>
+                <th scope="col" class="px-6 py-3 text-right font-semibold">Votes Wave</th>
+                <th scope="col" class="px-6 py-3 text-right font-semibold">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-rcs-border">
+            <tbody class="divide-y divide-rcs-border/70">
               {% for c in candidats %}
               <tr
-                class="hover:bg-[#18182C] transition-colors"
+                class="hover:bg-[#181832] transition-colors"
                 x-show="onglet === 'tous' || onglet === '{{ c.categorie.slug }}'"
               >
-                <td class="px-6 py-4 font-clash font-extrabold text-lg {% if forloop.counter == 1 %}text-rcs-gold{% elif forloop.counter == 2 %}text-gray-300{% elif forloop.counter == 3 %}text-[#CD7F32]{% else %}text-gray-500{% endif %}">
+                <td class="px-6 py-4 font-clash font-extrabold text-lg {% if forloop.counter == 1 %}text-rcs-gold{% elif forloop.counter == 2 %}text-slate-300{% elif forloop.counter == 3 %}text-[#CD7F32]{% else %}text-slate-400{% endif %}">
                   #{{ forloop.counter }}
                 </td>
                 <td class="px-6 py-4">
@@ -177,27 +162,27 @@
                     {% endif %}
                     <div>
                       <div class="font-clash font-bold text-white text-sm">{{ c.nom_artistique }}</div>
-                      <div class="text-[11px] text-gray-400">{{ c.prenom }} {{ c.nom }}</div>
+                      <div class="text-[11px] text-slate-300">{{ c.prenom }} {{ c.nom }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 text-gray-300 font-medium">
+                <td class="px-6 py-4 text-slate-200 font-medium">
                   {{ c.etablissement.nom|default:'Non renseigné' }}
                 </td>
                 <td class="px-6 py-4">
-                  <span class="px-2 py-0.5 rounded bg-rcs-cardLight text-gray-300 font-medium">
+                  <span class="px-2.5 py-1 rounded bg-[#1C1C36] text-slate-200 font-medium border border-rcs-border">
                     {{ c.categorie.nom }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-right font-clash font-black text-rcs-orange text-base">
+                <td class="px-6 py-4 text-right font-clash font-black text-rcs-gold text-base">
                   {{ c.votes }}
                 </td>
                 <td class="px-6 py-4 text-right space-x-2">
-                  <a href="{% url 'candidat_detail' c.id %}" class="px-2.5 py-1 rounded bg-[#18182C] text-gray-300 hover:text-white border border-rcs-border text-[11px]">
+                  <a href="{% url 'candidat_detail' c.id %}" class="px-3 py-1.5 rounded-lg bg-[#181832] text-slate-200 hover:text-white border border-rcs-border text-xs font-semibold">
                     Profil
                   </a>
-                  <a href="{% url 'vote' c.id %}" class="btn-clash-orange text-[11px] py-1 px-3">
-                    Voter
+                  <a href="{% url 'vote' c.id %}" class="btn-clash-orange text-xs py-1.5 px-3.5">
+                    Voter 500 F
                   </a>
                 </td>
               </tr>
@@ -207,15 +192,15 @@
         </div>
       </div>
     {% else %}
-      <div class="carte-rcs p-12 border-rcs-border text-center bg-[#121220] max-w-xl mx-auto my-8">
-        <div class="w-16 h-16 rounded-full bg-rcs-gold/20 text-rcs-gold flex items-center justify-center text-3xl font-bold mx-auto mb-4">
+      <div class="carte-rcs p-12 border-rcs-border text-center bg-[#131326] max-w-xl mx-auto my-8 shadow-xl">
+        <div class="w-16 h-16 rounded-full bg-rcs-gold/20 text-rcs-gold flex items-center justify-center text-3xl font-bold mx-auto mb-4 border border-rcs-gold/40 shadow-glow-orange">
           👑
         </div>
         <h2 class="text-2xl font-clash font-bold text-white mb-2">AUCUN CLASSEMENT DISPONIBLE</h2>
-        <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+        <p class="text-xs text-slate-300 mb-6 leading-relaxed">
           Le classement débutera dès la première validation d'inscriptions et les premiers votes officiels.
         </p>
-        <a href="{% url 'inscription' %}" class="btn-clash-orange text-xs py-3 px-8">
+        <a href="{% url 'inscription' %}" class="btn-clash-orange text-xs py-3 px-8 font-clash font-bold">
           Inscrire un participant maintenant →
         </a>
       </div>

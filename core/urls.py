@@ -18,10 +18,13 @@ urlpatterns = [
     path('espace-candidat/duels/', views.candidat_duels_view, name='candidat_duels'),
     path('espace-candidat/notifications/', views.candidat_notifications, name='candidat_notifications'),
 
-    # Admin panel
+    # Admin panel & Authentification
+    path('admin-panel/connexion/', views.admin_login, name='admin_login'),
+    path('admin-panel/deconnexion/', views.admin_logout, name='admin_logout'),
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/candidats/', views.admin_candidats, name='admin_candidats'),
     path('admin-panel/votes/', views.admin_votes, name='admin_votes'),
+    path('admin-panel/votes/valider/<int:vote_id>/', views.admin_valider_vote, name='admin_valider_vote'),
     path('admin-panel/duels/', views.admin_duels, name='admin_duels'),
     path('admin-panel/transactions/', views.admin_transactions, name='admin_transactions'),
     path('admin-panel/annonces/', views.admin_annonces, name='admin_annonces'),

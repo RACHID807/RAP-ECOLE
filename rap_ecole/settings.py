@@ -2,15 +2,29 @@
 Django settings for rap_ecole project.
 Frontend-only phase: no real database needed beyond SQLite default.
 """
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-rap-ecole-frontend-dev-key-change-in-production'
+# Clé secrète lue depuis l'environnement en production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rap-ecole-frontend-dev-key-change-in-production')
 
-DEBUG = True
+# DEBUG = False en production via la variable DEBUG=False
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
+
+# Domaines autorisés pour la protection CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+    'https://*.railway.app',
+    'https://*.lws.fr',
+    'https://*.rapclashschool.ci',
+    'https://*.rapschool.ci',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,13 +38,23 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+]
+
+# Support automatique de WhiteNoise pour servir les fichiers statiques en production
+try:
+    import whitenoise
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+except ImportError:
+    pass
+
+MIDDLEWARE.extend([
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+])
 
 ROOT_URLCONF = 'rap_ecole.urls'
 
@@ -45,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.site_global_context',
             ],
         },
     },
@@ -53,16 +78,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'rap_ecole.wsgi.application'
 
 DATABASES = {
-   
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rap_ecole_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-
 }
 
 AUTH_PASSWORD_VALIDATORS = []

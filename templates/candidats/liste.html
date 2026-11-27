@@ -5,9 +5,9 @@
 <!--
   Page de découverte de tous les rappeurs avec leur vraie photo de profil visible,
   recherche en direct et filtres par catégorie scolaire.
-  Gère proprement l'état vide lorsque aucun candidat n'est encore enregistré.
+  Contrastes et lisibilité rehaussés aux couleurs de la charte.
 -->
-<div class="py-12 bg-[#0A0A12] min-h-screen" x-data="{
+<div class="py-12 bg-[#0A0A14] min-h-screen" x-data="{
   recherche: '',
   categorieChoisie: 'tous',
   estVisible(nom, categorie) {
@@ -28,26 +28,26 @@
         <h1 class="text-4xl font-clash font-extrabold text-white tracking-wider">
           LES CANDIDATS DU CLASH
         </h1>
-        <p class="text-xs text-gray-400 mt-1">
+        <p class="text-xs text-slate-300 mt-1">
           Liste officielle des participants avec photos de profil, extraits audio et vidéos.
         </p>
       </div>
 
       <!-- Compteur total -->
-      <div class="px-4 py-2 rounded-xl bg-rcs-card border border-rcs-border text-xs text-gray-300">
-        <strong class="text-rcs-orange">{{ candidats|length }} rappeurs</strong> validés
+      <div class="px-4 py-2 rounded-xl bg-[#131326] border border-rcs-border text-xs text-slate-200 shadow-sm">
+        <strong class="text-rcs-orange font-bold">{{ candidats|length }} rappeurs</strong> validés
       </div>
     </div>
 
-    <!-- Filtres & Moteur de Recherche -->
-    <div class="carte-rcs p-4 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-[#121220]">
+    <!-- Filtres & Moteur de Recherche (contrastes optimisés) -->
+    <div class="carte-rcs p-4 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-[#131326] shadow-lg">
       <!-- Recherche par texte -->
       <div class="w-full md:w-96">
         <input
           type="text"
           x-model="recherche"
           placeholder="Rechercher un rappeur, un établissement..."
-          class="w-full px-4 py-2.5 text-xs bg-[#0C0C16] border border-rcs-border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-rcs-orange"
+          class="w-full px-4 py-2.5 text-xs bg-[#0C0C18] border border-rcs-border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-rcs-orange focus:ring-1 focus:ring-rcs-orange"
         />
       </div>
 
@@ -56,32 +56,32 @@
         <button
           type="button"
           @click="categorieChoisie = 'tous'"
-          :class="categorieChoisie === 'tous' ? 'bg-rcs-orange text-white shadow-glow-orange' : 'bg-rcs-cardLight text-gray-400 border border-rcs-border hover:text-white'"
-          class="px-4 py-2 rounded-xl text-xs font-clash font-bold transition-all"
+          :class="categorieChoisie === 'tous' ? 'bg-rcs-orange text-white shadow-glow-orange font-bold' : 'bg-[#181832] text-slate-300 border border-rcs-border hover:text-white'"
+          class="px-4 py-2 rounded-xl text-xs font-clash transition-all"
         >
           Tous les niveaux
         </button>
         <button
           type="button"
           @click="categorieChoisie = 'college'"
-          :class="categorieChoisie === 'college' ? 'bg-rcs-green text-black shadow-glow-green' : 'bg-rcs-cardLight text-gray-400 border border-rcs-border hover:text-white'"
-          class="px-4 py-2 rounded-xl text-xs font-clash font-bold transition-all"
+          :class="categorieChoisie === 'college' ? 'bg-rcs-green text-slate-950 shadow-glow-green font-bold' : 'bg-[#181832] text-slate-300 border border-rcs-border hover:text-white'"
+          class="px-4 py-2 rounded-xl text-xs font-clash transition-all"
         >
           Collèges
         </button>
         <button
           type="button"
           @click="categorieChoisie = 'lycee'"
-          :class="categorieChoisie === 'lycee' ? 'bg-rcs-violet text-white shadow-glow-violet' : 'bg-rcs-cardLight text-gray-400 border border-rcs-border hover:text-white'"
-          class="px-4 py-2 rounded-xl text-xs font-clash font-bold transition-all"
+          :class="categorieChoisie === 'lycee' ? 'bg-rcs-violet text-white shadow-glow-violet font-bold' : 'bg-[#181832] text-slate-300 border border-rcs-border hover:text-white'"
+          class="px-4 py-2 rounded-xl text-xs font-clash transition-all"
         >
           Lycées
         </button>
         <button
           type="button"
           @click="categorieChoisie = 'universite'"
-          :class="categorieChoisie === 'universite' ? 'bg-rcs-gold text-black shadow-glow-orange' : 'bg-rcs-cardLight text-gray-400 border border-rcs-border hover:text-white'"
-          class="px-4 py-2 rounded-xl text-xs font-clash font-bold transition-all"
+          :class="categorieChoisie === 'universite' ? 'bg-rcs-gold text-slate-950 shadow-glow-orange font-bold' : 'bg-[#181832] text-slate-300 border border-rcs-border hover:text-white'"
+          class="px-4 py-2 rounded-xl text-xs font-clash transition-all"
         >
           Universités
         </button>
@@ -93,15 +93,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for c in candidats %}
         <div
-          class="carte-rcs p-6 flex flex-col justify-between group hover:border-rcs-orange/60"
+          class="carte-rcs p-6 flex flex-col justify-between group hover:border-rcs-orange/70 bg-[#131326] shadow-xl"
           x-show="estVisible('{{ c.nom_artistique }} {{ c.prenom }} {{ c.nom }} {{ c.etablissement.nom }} {{ c.style }}', '{{ c.categorie.slug }}')"
         >
           <div>
             <div class="flex items-center justify-between pb-3 border-b border-rcs-border mb-4">
-              <span class="px-2.5 py-0.5 rounded text-[11px] font-clash font-bold bg-[#1A1A2E] text-rcs-gold border border-rcs-gold/30">
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-clash font-bold bg-[#1C1C36] text-rcs-gold border border-rcs-gold/40">
                 #{{ c.rang|default:forloop.counter }} Rang
               </span>
-              <span class="text-xs font-semibold text-gray-400">
+              <span class="text-xs font-semibold text-slate-300">
                 {{ c.categorie.nom }}
               </span>
             </div>
@@ -115,8 +115,8 @@
                   class="w-20 h-20 rounded-2xl object-cover border-2 border-rcs-orange shadow-glow-orange group-hover:scale-105 transition-transform"
                 />
                 {% else %}
-                <div class="w-20 h-20 rounded-2xl bg-[#1A1A2E] border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-[10px] text-center p-1">
-                  En attente
+                <div class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center text-slate-300 text-[11px] text-center p-1 font-medium">
+                  Photo
                 </div>
                 {% endif %}
               </div>
@@ -124,22 +124,22 @@
                 <h2 class="text-xl font-clash font-bold text-white truncate group-hover:text-rcs-orange transition-colors">
                   {{ c.nom_artistique }}
                 </h2>
-                <p class="text-xs text-gray-400 truncate">{{ c.prenom }} {{ c.nom }}</p>
+                <p class="text-xs text-slate-300 truncate">{{ c.prenom }} {{ c.nom }}</p>
                 {% if c.style %}
-                <span class="inline-block px-2 py-0.5 rounded bg-rcs-violet/20 text-rcs-violet text-[10px] font-bold mt-1">
+                <span class="inline-block px-2 py-0.5 rounded bg-rcs-violet/20 text-rcs-violet text-[10px] font-bold mt-1 border border-rcs-violet/30">
                   {{ c.style }}
                 </span>
                 {% endif %}
               </div>
             </div>
 
-            <div class="bg-[#0C0C16] border border-rcs-border rounded-xl p-3 mb-4 text-xs">
+            <div class="bg-[#0C0C18] border border-rcs-border rounded-xl p-3 mb-4 text-xs">
               <div class="font-bold text-white truncate">{{ c.etablissement.nom|default:'Établissement' }}</div>
-              <div class="text-gray-400 text-[11px] mt-0.5">{{ c.commune }} · {{ c.ville }}</div>
+              <div class="text-slate-300 text-[11px] mt-0.5">{{ c.commune }} · {{ c.ville }}</div>
             </div>
 
             {% if c.audio_titre or c.video_titre %}
-            <div class="space-y-1.5 text-xs text-gray-300 mb-4 bg-[#161628] p-3 rounded-xl border border-rcs-border">
+            <div class="space-y-1.5 text-xs text-slate-200 mb-4 bg-[#181832] p-3 rounded-xl border border-rcs-border">
               {% if c.audio_titre %}
               <div class="flex items-center gap-2 truncate">
                 <span class="text-rcs-orange">🎵</span>
@@ -149,7 +149,7 @@
               {% if c.video_titre %}
               <div class="flex items-center gap-2 truncate">
                 <span class="text-rcs-pink">🎬</span>
-                <span class="truncate text-gray-400">{{ c.video_titre }}</span>
+                <span class="truncate text-slate-300">{{ c.video_titre }}</span>
               </div>
               {% endif %}
             </div>
@@ -158,16 +158,16 @@
 
           <div class="pt-4 border-t border-rcs-border mt-2">
             <div class="flex items-baseline justify-between mb-4">
-              <span class="text-xs text-gray-400 font-semibold uppercase">Total Voix</span>
-              <span class="text-xl font-clash font-black text-rcs-orange">{{ c.votes }}</span>
+              <span class="text-xs text-slate-300 font-semibold uppercase">Total Voix</span>
+              <span class="text-xl font-clash font-black text-rcs-gold">{{ c.votes }}</span>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
-              <a href="{% url 'candidat_detail' c.id %}" class="px-3 py-2 text-center rounded-xl bg-rcs-cardLight border border-rcs-border hover:border-rcs-cyan text-xs font-bold text-gray-200">
-                Profil & Vidéo
+              <a href="{% url 'candidat_detail' c.id %}" class="px-3 py-2 text-center rounded-xl bg-[#1B1B36] border border-rcs-border hover:border-rcs-cyan text-xs font-bold text-slate-200 transition-colors">
+                Profil & Médias
               </a>
               <a href="{% url 'vote' c.id %}" class="btn-clash-orange text-xs py-2 text-center">
-                Voter
+                Voter (500 F)
               </a>
             </div>
           </div>
@@ -175,12 +175,12 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="carte-rcs p-12 border-rcs-border text-center bg-[#121220] max-w-xl mx-auto my-12">
-        <div class="w-16 h-16 rounded-full bg-rcs-orange/20 text-rcs-orange flex items-center justify-center text-3xl font-bold mx-auto mb-4">
+      <div class="carte-rcs p-12 border-rcs-border text-center bg-[#131326] max-w-xl mx-auto my-12 shadow-xl">
+        <div class="w-16 h-16 rounded-full bg-rcs-orange/20 text-rcs-orange flex items-center justify-center text-3xl font-bold mx-auto mb-4 border border-rcs-orange/40 shadow-glow-orange">
           👥
         </div>
         <h2 class="text-2xl font-clash font-bold text-white mb-2">AUCUN CANDIDAT ENREGISTRÉ POUR L'INSTANT</h2>
-        <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+        <p class="text-xs text-slate-300 mb-6 leading-relaxed">
           La plateforme est prête. Les profils des élèves et étudiants apparaîtront ici avec leur photo de profil dès leur inscription validée.
         </p>
         <a href="{% url 'inscription' %}" class="btn-clash-orange text-xs py-3 px-8">

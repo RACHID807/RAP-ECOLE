@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Accueil — RAP CLASH SCHOOL (RCS){% endblock %}
+{% block title %}Accueil — RAP CLASH SCHOOL (RCS) Côte d'Ivoire{% endblock %}
 
 {% block content %}
 
 <!-- ========================================================================= -->
 <!-- 1. HERO SECTION (STYLE ELECTRIQUE & NÉON DE LA MAQUETTE)                 -->
 <!-- ========================================================================= -->
-<section class="relative py-16 md:py-24 overflow-hidden border-b border-rcs-border bg-[#0A0A12]">
+<section class="relative py-16 md:py-24 overflow-hidden border-b border-rcs-border bg-[#0A0A14]">
   <!-- Halos néons en arrière-plan -->
   <div class="absolute top-10 left-1/4 w-96 h-96 bg-rcs-orange/15 rounded-full filter blur-[100px] pointer-events-none"></div>
   <div class="absolute bottom-10 right-1/4 w-96 h-96 bg-rcs-violet/20 rounded-full filter blur-[100px] pointer-events-none"></div>
@@ -24,8 +24,8 @@
       L'ARÈNE DU RAP <span class="text-transparent bg-clip-text bg-gradient-to-r from-rcs-orange via-rcs-pink to-rcs-violet">INTER-ÉTABLISSEMENTS</span>
     </h1>
 
-    <p class="text-base md:text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
-      Plateforme dédiée aux élèves et étudiants de Côte d'Ivoire. Chaque candidat défend son établissement avec sa <strong>photo de profil</strong>, sa <strong>vidéo de clash</strong> et son <strong>extrait audio</strong>.
+    <p class="text-base md:text-lg text-slate-200 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+      Plateforme officielle dédiée aux élèves et étudiants de Côte d'Ivoire. Chaque candidat défend son établissement avec sa <strong>photo de profil</strong>, sa <strong>vidéo de clash</strong> et son <strong>extrait audio</strong>.
     </p>
 
     <!-- Boutons d'Action (Style Maquette) -->
@@ -38,23 +38,23 @@
       </a>
     </div>
 
-    <!-- 4 Stats Boxes réelles -->
+    <!-- 4 Stats Boxes réelles (contrastes rehaussés) -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-      <div class="carte-rcs p-5 border-rcs-orange/30">
+      <div class="carte-rcs p-5 border-rcs-orange/40 bg-[#141426]">
         <div class="text-3xl font-clash font-bold text-rcs-orange">{{ stats.total_candidats }}</div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">Candidats inscrits</div>
+        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mt-1">Candidats inscrits</div>
       </div>
-      <div class="carte-rcs p-5 border-rcs-gold/30">
+      <div class="carte-rcs p-5 border-rcs-gold/40 bg-[#141426]">
         <div class="text-3xl font-clash font-bold text-rcs-gold">{{ stats.total_votes }}</div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">Votes enregistrés</div>
+        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mt-1">Votes enregistrés</div>
       </div>
-      <div class="carte-rcs p-5 border-rcs-cyan/30">
+      <div class="carte-rcs p-5 border-rcs-cyan/40 bg-[#141426]">
         <div class="text-3xl font-clash font-bold text-rcs-cyan">{{ stats.etablissements }}</div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">Établissements</div>
+        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mt-1">Établissements</div>
       </div>
-      <div class="carte-rcs p-5 border-rcs-green/30">
+      <div class="carte-rcs p-5 border-rcs-green/40 bg-[#141426]">
         <div class="text-3xl font-clash font-bold text-rcs-green">{{ stats.total_duels }}</div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">Duels programmés</div>
+        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mt-1">Duels programmés</div>
       </div>
     </div>
 
@@ -64,13 +64,13 @@
 <!-- ========================================================================= -->
 <!-- 2. CLASH LIVE DU MOMENT                                                   -->
 <!-- ========================================================================= -->
-<section class="py-16 bg-[#0E0E1A] border-b border-rcs-border">
+<section class="py-16 bg-[#0E0E1C] border-b border-rcs-border">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
       <div>
         <div class="flex items-center gap-2 text-xs font-clash font-bold text-rcs-orange uppercase tracking-wider mb-1">
-          <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span> Live Streaming & Vote
+          <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Live Streaming & Vote
         </div>
         <h2 class="text-3xl md:text-4xl font-clash font-bold text-white tracking-wider">
           CLASH LIVE EN COURS
@@ -84,13 +84,13 @@
     <!-- Affiche du Duel Live ou état d'attente -->
     {% if duels_actifs %}
       {% for duel in duels_actifs|slice:":1" %}
-      <div class="carte-rcs p-6 md:p-10 border-rcs-border relative overflow-hidden bg-gradient-to-b from-[#141426] to-[#0E0E1A]">
+      <div class="carte-rcs p-6 md:p-10 border-rcs-border relative overflow-hidden bg-gradient-to-b from-[#16162E] to-[#0E0E1C]">
         <div class="flex items-center justify-between pb-6 border-b border-rcs-border mb-8">
           <span class="px-3 py-1 rounded-md bg-rcs-orange/20 text-rcs-orange text-xs font-bold uppercase tracking-wider border border-rcs-orange/40">
             {{ duel.phase }}
           </span>
-          <div class="text-xs text-gray-400 flex items-center gap-2">
-            <span class="text-rcs-pink">⏱ Temps restant :</span>
+          <div class="text-xs text-slate-300 flex items-center gap-2">
+            <span class="text-rcs-pink font-semibold">⏱ Temps restant :</span>
             <strong class="text-white">{{ duel.temps_restant }}</strong>
           </div>
         </div>
@@ -99,15 +99,15 @@
           <div class="md:col-span-3 text-center flex flex-col items-center">
             <div class="relative mb-4">
               <img
-                src="{{ duel.candidat1.photo_url|default:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80' }}"
+                src="{{ duel.candidat1.photo_url }}"
                 alt="{{ duel.candidat1.nom_artistique }}"
                 class="w-36 h-36 rounded-2xl object-cover border-4 border-rcs-orange shadow-glow-orange"
               />
             </div>
             <h3 class="text-2xl font-clash font-bold text-white">{{ duel.candidat1.nom_artistique }}</h3>
-            <p class="text-xs text-gray-400 mb-2">{{ duel.candidat1.etablissement.nom }}</p>
+            <p class="text-xs text-slate-300 mb-2">{{ duel.candidat1.etablissement.nom }}</p>
             <div class="text-3xl font-clash font-extrabold text-rcs-orange mb-3">
-              {{ duel.votes1 }} <span class="text-xs font-sans text-gray-400">votes ({{ duel.pct1 }}%)</span>
+              {{ duel.votes1 }} <span class="text-xs font-sans text-slate-300">votes ({{ duel.pct1 }}%)</span>
             </div>
           </div>
 
@@ -120,15 +120,15 @@
           <div class="md:col-span-3 text-center flex flex-col items-center">
             <div class="relative mb-4">
               <img
-                src="{{ duel.candidat2.photo_url|default:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80' }}"
+                src="{{ duel.candidat2.photo_url }}"
                 alt="{{ duel.candidat2.nom_artistique }}"
                 class="w-36 h-36 rounded-2xl object-cover border-4 border-rcs-violet shadow-glow-violet"
               />
             </div>
             <h3 class="text-2xl font-clash font-bold text-white">{{ duel.candidat2.nom_artistique }}</h3>
-            <p class="text-xs text-gray-400 mb-2">{{ duel.candidat2.etablissement.nom }}</p>
+            <p class="text-xs text-slate-300 mb-2">{{ duel.candidat2.etablissement.nom }}</p>
             <div class="text-3xl font-clash font-extrabold text-rcs-violet mb-3">
-              {{ duel.votes2 }} <span class="text-xs font-sans text-gray-400">votes ({{ duel.pct2 }}%)</span>
+              {{ duel.votes2 }} <span class="text-xs font-sans text-slate-300">votes ({{ duel.pct2 }}%)</span>
             </div>
           </div>
         </div>
@@ -141,12 +141,12 @@
       </div>
       {% endfor %}
     {% else %}
-      <div class="carte-rcs p-10 border-rcs-border text-center bg-[#121220] max-w-xl mx-auto">
-        <div class="w-16 h-16 rounded-full bg-rcs-orange/20 text-rcs-orange flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+      <div class="carte-rcs p-10 border-rcs-border text-center bg-[#131326] max-w-xl mx-auto shadow-xl">
+        <div class="w-16 h-16 rounded-full bg-rcs-orange/20 text-rcs-orange flex items-center justify-center text-2xl font-bold mx-auto mb-4 border border-rcs-orange/40 shadow-glow-orange">
           ⚔️
         </div>
         <h3 class="text-xl font-clash font-bold text-white mb-2">AUCUN CLASH EN COURS POUR LE MOMENT</h3>
-        <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+        <p class="text-xs text-slate-300 mb-6 leading-relaxed">
           Les inscriptions et les dépôts de vidéos/audios sont ouverts. Les premières affiches de duels seront programmées dès la validation des dossiers par le jury.
         </p>
         <a href="{% url 'inscription' %}" class="btn-clash-orange text-xs py-3 px-6">
@@ -161,7 +161,7 @@
 <!-- ========================================================================= -->
 <!-- 3. TOP CHAMPIONS / LEADERBOARD                                            -->
 <!-- ========================================================================= -->
-<section class="py-16 bg-[#0A0A12] border-b border-rcs-border">
+<section class="py-16 bg-[#0A0A14] border-b border-rcs-border">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="text-center max-w-2xl mx-auto mb-12">
@@ -171,18 +171,18 @@
       <h2 class="text-3xl md:text-4xl font-clash font-bold text-white tracking-wider">
         CLASSEMENT DES CANDIDATS
       </h2>
-      <p class="text-xs text-gray-400 mt-2">
-        Les rappeurs validés et les suffrages enregistrés en temps réel
+      <p class="text-xs text-slate-300 mt-2">
+        Les rappeurs validés et les suffrages certifiés en temps réel
       </p>
     </div>
 
     {% if candidats_top %}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for c in candidats_top %}
-        <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between group">
+        <div class="carte-rcs p-6 border-rcs-border flex flex-col justify-between group bg-[#131326] shadow-lg">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-2.5 py-1 rounded font-clash font-bold text-xs bg-rcs-gold text-black">
+              <span class="px-2.5 py-1 rounded font-clash font-bold text-xs bg-rcs-gold text-slate-950">
                 #{{ c.rang|default:forloop.counter }} RANG
               </span>
               <span class="text-xs font-semibold text-rcs-green">{{ c.categorie.nom }}</span>
@@ -196,29 +196,29 @@
                 class="w-28 h-28 rounded-full object-cover border-4 border-rcs-cyan shadow-glow-cyan"
               />
               {% else %}
-              <div class="w-28 h-28 rounded-full bg-[#1A1A2E] border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs text-center p-2">
+              <div class="w-28 h-28 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-slate-300 text-xs text-center p-2 font-medium">
                 Photo en attente
               </div>
               {% endif %}
             </div>
 
             <h3 class="text-xl font-clash font-bold text-white text-center">{{ c.nom_artistique }}</h3>
-            <p class="text-xs text-gray-400 text-center mb-3">{{ c.prenom }} {{ c.nom }}</p>
+            <p class="text-xs text-slate-300 text-center mb-3">{{ c.prenom }} {{ c.nom }}</p>
 
-            <div class="bg-[#18182C] p-3 rounded-xl border border-rcs-border text-center text-xs mb-4">
+            <div class="bg-[#181832] p-3 rounded-xl border border-rcs-border text-center text-xs mb-4">
               <div class="font-semibold text-white truncate">{{ c.etablissement.nom|default:'Établissement' }}</div>
-              <div class="text-gray-400 text-[11px] mt-0.5">{{ c.commune }} · {{ c.ville }}</div>
+              <div class="text-slate-300 text-[11px] mt-0.5">{{ c.commune }} · {{ c.ville }}</div>
             </div>
           </div>
 
           <div class="pt-4 border-t border-rcs-border">
             <div class="flex items-baseline justify-between mb-4">
-              <span class="text-xs text-gray-400 uppercase font-semibold">Total Votes</span>
+              <span class="text-xs text-slate-300 uppercase font-semibold">Total Votes</span>
               <span class="text-2xl font-clash font-black text-rcs-gold">{{ c.votes }}</span>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
-              <a href="{% url 'candidat_detail' c.id %}" class="px-3 py-2 text-center rounded-xl bg-rcs-cardLight border border-rcs-border text-xs font-bold text-gray-200">
+              <a href="{% url 'candidat_detail' c.id %}" class="px-3 py-2 text-center rounded-xl bg-[#1B1B36] border border-rcs-border text-xs font-bold text-slate-200 hover:border-rcs-cyan transition-colors">
                 Profil
               </a>
               <a href="{% url 'vote' c.id %}" class="btn-clash-orange text-xs py-2 text-center">
@@ -230,12 +230,12 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="carte-rcs p-10 border-rcs-border text-center bg-[#121220] max-w-xl mx-auto">
-        <div class="w-16 h-16 rounded-full bg-rcs-gold/20 text-rcs-gold flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+      <div class="carte-rcs p-10 border-rcs-border text-center bg-[#131326] max-w-xl mx-auto shadow-xl">
+        <div class="w-16 h-16 rounded-full bg-rcs-gold/20 text-rcs-gold flex items-center justify-center text-2xl font-bold mx-auto mb-4 border border-rcs-gold/40 shadow-glow-orange">
           👑
         </div>
         <h3 class="text-xl font-clash font-bold text-white mb-2">AUCUN CANDIDAT ENREGISTRÉ</h3>
-        <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+        <p class="text-xs text-slate-300 mb-6 leading-relaxed">
           Le classement sera mis à jour dès que les premiers candidats auront déposé leur candidature et validé leur profil.
         </p>
         <a href="{% url 'inscription' %}" class="btn-clash-pink text-xs py-3 px-6">
@@ -248,43 +248,48 @@
 </section>
 
 <!-- ========================================================================= -->
-<!-- 4. VOTE PASS (COMMUNAUTÉ WAVE, DJAMO, ORANGE MONEY)                       -->
+<!-- 4. VOTE PASS WAVE DIRECT À 500 FCFA                                       -->
 <!-- ========================================================================= -->
-<section class="py-16 bg-[#0E0E1A]">
+<section class="py-16 bg-[#0E0E1C]">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="carte-rcs p-8 md:p-12 border-rcs-gold/40 bg-gradient-to-br from-[#1A1A2E] via-[#121220] to-[#0A0A12] relative overflow-hidden">
+    <div class="carte-rcs p-8 md:p-12 border-rcs-gold/40 bg-gradient-to-br from-[#1A1A36] via-[#131326] to-[#0A0A14] relative overflow-hidden shadow-2xl">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
         <div>
-          <span class="px-3 py-1 rounded-md bg-rcs-gold/20 text-rcs-gold text-xs font-clash font-bold uppercase tracking-wider">
-            VOTE PASS OFFICIEL
+          <span class="px-3 py-1 rounded-md bg-rcs-gold/20 text-rcs-gold text-xs font-clash font-bold uppercase tracking-wider border border-rcs-gold/30">
+            VOTE PASS OFFICIEL WAVE CI
           </span>
           <h2 class="text-3xl font-clash font-bold text-white mt-3 mb-2">
             BOOSTEZ VOTRE CANDIDAT EN DIRECT
           </h2>
-          <p class="text-xs text-gray-300 leading-relaxed mb-6">
-            Paiements locaux sécurisés via Wave Côte d'Ivoire, Djamo et Orange Money.
+          <p class="text-xs text-slate-200 leading-relaxed mb-6">
+            Paiement direct Wave Côte d'Ivoire fixé à <strong>500 FCFA</strong>. Chaque vote est certifié par l'administration et notifié par courriel via <strong>Brevo</strong> (rap.ivoire.ecole@gmail.com).
           </p>
-          <div class="flex items-center gap-3">
-            <div class="p-2.5 rounded-lg bg-[#1D3557] text-[#00E5FF] font-bold text-xs flex items-center gap-1.5">
-              Wave CI
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="px-3 py-2 rounded-lg bg-[#1D3557] text-[#00E5FF] font-bold text-xs flex items-center gap-1.5 border border-[#00E5FF]/30">
+              Wave Direct 500 FCFA
             </div>
-            <div class="p-2.5 rounded-lg bg-[#2A0845] text-[#FFC107] font-bold text-xs flex items-center gap-1.5">
+            <div class="px-3 py-2 rounded-lg bg-[#2A0845] text-[#FFC107] font-bold text-xs flex items-center gap-1.5 border border-[#FFC107]/30">
               Djamo
             </div>
-            <div class="p-2.5 rounded-lg bg-[#FF6B00]/20 text-[#FF6B00] font-bold text-xs flex items-center gap-1.5">
+            <div class="px-3 py-2 rounded-lg bg-[#FF6B00]/20 text-[#FF6B00] font-bold text-xs flex items-center gap-1.5 border border-[#FF6B00]/30">
               Orange Money
             </div>
           </div>
         </div>
 
-        <div class="carte-rcs p-6 border-rcs-border bg-[#0C0C16] text-center">
-          <div class="w-12 h-12 rounded-full bg-rcs-gold/20 text-rcs-gold flex items-center justify-center text-xl font-bold mx-auto mb-3">
-            ⚡
+        <div class="carte-rcs p-6 border-rcs-border bg-[#0C0C18] text-center shadow-xl">
+          <div class="w-12 h-12 rounded-full bg-[#00E5FF]/20 text-[#00E5FF] flex items-center justify-center text-xl font-bold mx-auto mb-3 border border-[#00E5FF]/40 shadow-glow-cyan">
+            📱
           </div>
-          <h3 class="text-base font-clash font-bold text-white mb-1">Pass Rap Clash School</h3>
-          <p class="text-xs text-gray-400 mb-4">À partir de 500 FCFA pour soutenir votre établissement</p>
-          <a href="{% url 'vote' 1 %}" class="btn-clash-orange w-full text-xs py-3">
-            Consulter les Vote Pass
+          <h3 class="text-base font-clash font-bold text-white mb-1">Lien de Paiement Wave</h3>
+          <p class="text-xs text-slate-300 mb-4">500 FCFA par vote pour soutenir l'école de votre choix</p>
+          <a
+            href="{{ wave_pay_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-clash-orange w-full text-xs py-3 font-clash font-bold"
+          >
+            Payer 500 FCFA avec Wave CI →
           </a>
         </div>
       </div>

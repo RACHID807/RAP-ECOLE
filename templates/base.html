@@ -13,14 +13,14 @@
       theme: {
         extend: {
           colors: {
-<<<<<<< HEAD
-            // Thème Sombre & Électrique de la maquette RCS
+            // Thème Électrique & Sombre de la maquette RCS avec contrastes rehaussés
             rcs: {
-              bg: '#0A0A12',
-              card: '#121220',
-              cardLight: '#18182C',
-              border: '#24243D',
-              // Palette de l'image :
+              bg: '#0A0A14',
+              card: '#131324',
+              cardLight: '#1B1B32',
+              border: '#2A2A48',
+              borderLight: '#3D3D66',
+              // Palette officielle de l'image :
               orange: '#FF6B00',    // Electric Orange
               violet: '#9C27B0',    // Neon Violet
               gold: '#FFC107',      // Gold / Honey
@@ -29,28 +29,6 @@
               pink: '#FF007F',      // Hot Pink
             }
           },
-=======
-            // Palette or (remplace l'ancien vert, les noms de classes restent les mêmes)
-                  ci: {
-                          50:  '#fff8e1',
-                          100: '#ffecb3',
-                          200: '#ffe082',
-                          300: '#ffd54f',
-                          400: '#ffca28',
-                          500: '#ffc107',
-                          600: '#ffc107',
-                          700: '#ffb300',
-                          800: '#ffa000',
-                          900: '#ff8f00',
-                        950: '#0a0a0a',
-                      },
-            // Accent vert émeraude (remplace l'orange)
-              ivoire: {
-                            orange: '#00e676',
-                            light: '#16160f',
-                    },
-            },
->>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
           fontFamily: {
             display: ['"Impact"', '"Oswald"', '"Exo 2"', 'sans-serif'],
             sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
@@ -66,14 +44,7 @@
       }
     }
   </script>
-<<<<<<< HEAD
-
   <!-- Typographies Google Fonts -->
-=======
-   
-  </style>
-  <!-- Typographie propre et lisible -->
->>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet"/>
@@ -83,8 +54,8 @@
 
   <style>
     body {
-      background-color: #0A0A12;
-      color: #F3F4F6;
+      background-color: #0A0A14;
+      color: #F1F5F9; /* Contraste rehaussé pour une lecture agréable */
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
     }
@@ -93,6 +64,21 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
+
+    /* Animation du bandeau défilant (Marquee) */
+    @keyframes rcs-marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-track {
+      display: flex;
+      width: 200%;
+      animation: rcs-marquee 25s linear infinite;
+    }
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
     /* Boutons néon selon la maquette */
     .btn-clash-orange {
       background: linear-gradient(135deg, #FF6B00, #E65100);
@@ -111,7 +97,6 @@
       box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
       transform: translateY(-1px);
     }
-<<<<<<< HEAD
     .btn-clash-violet {
       background: linear-gradient(135deg, #9C27B0, #7B1FA2);
       color: #FFFFFF;
@@ -146,35 +131,86 @@
       box-shadow: 0 0 35px rgba(255, 0, 127, 0.75);
       transform: translateY(-1px);
     }
+
+    /* Cartes améliorées pour lisibilité optimale */
     .carte-rcs {
-      background-color: #121220;
-      border: 1px solid #24243D;
+      background-color: #131324;
+      border: 1px solid #2A2A48;
       border-radius: 1rem;
       transition: all 0.25s ease;
     }
     .carte-rcs:hover {
-      border-color: #38385E;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-color: #3D3D66;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
+
+    /* Bouton WhatsApp Vert */
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #FFFFFF;
+      font-weight: 700;
+      border-radius: 0.75rem;
+      padding: 0.65rem 1.25rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 20px rgba(37, 211, 102, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-whatsapp:hover {
+      box-shadow: 0 0 30px rgba(37, 211, 102, 0.6);
+      transform: translateY(-1px);
+    }
+
     /* Barre de défilement stylée */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0A0A12; }
+    ::-webkit-scrollbar-track { background: #0A0A14; }
     ::-webkit-scrollbar-thumb { background: #FF6B00; border-radius: 9999px; }
-=======
-    .btn-connexion {
-  background: var(--couleur-principale);
-  color: var(--texte-sur-principale);
-  }
->>>>>>> 1ec9de03a47a9fe4a6e76b614bdb03f8b0ab4ce9
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body class="flex flex-col min-h-screen">
 
   <!-- ========================================================================= -->
+  <!-- BANDEAU DÉFILANT D'INFORMATION (MARQUEE EN HAUT DU SITE)                 -->
+  <!-- ========================================================================= -->
+  <div class="bg-gradient-to-r from-[#0E0E1C] via-[#16162A] to-[#0E0E1C] border-b border-rcs-border/80 text-xs py-2 overflow-hidden relative z-50 flex items-center shadow-sm">
+    <div class="px-3 sm:px-4 py-0.5 bg-rcs-orange/20 border-r border-rcs-orange/30 text-rcs-orange font-clash font-bold uppercase tracking-wider shrink-0 z-10 flex items-center gap-1.5 shadow-md">
+      <span class="w-2 h-2 rounded-full bg-rcs-orange animate-ping"></span>
+      <span>Information</span>
+    </div>
+
+    <!-- Piste défilante animée -->
+    <div class="overflow-hidden whitespace-nowrap flex-1 flex">
+      <div class="marquee-track font-medium text-slate-200">
+        <span class="inline-block px-8">
+          📢 {{ message_defilant|default:"information : bienvenue sur RAP CLASH SCHOOL , A Bientot pour les duels ." }}
+        </span>
+        <span class="inline-block px-8 text-rcs-gold font-semibold">
+          ★ Les votes officiels Wave CI sont ouverts à 500 FCFA sur la plateforme !
+        </span>
+        <span class="inline-block px-8 text-rcs-cyan font-semibold">
+          🔥 Préparez vos écoles pour les confrontations en direct.
+        </span>
+        <!-- Duplication pour défilement infini sans coupure -->
+        <span class="inline-block px-8">
+          📢 {{ message_defilant|default:"information : bienvenue sur RAP CLASH SCHOOL , A Bientot pour les duels ." }}
+        </span>
+        <span class="inline-block px-8 text-rcs-gold font-semibold">
+          ★ Les votes officiels Wave CI sont ouverts à 500 FCFA sur la plateforme !
+        </span>
+        <span class="inline-block px-8 text-rcs-cyan font-semibold">
+          🔥 Préparez vos écoles pour les confrontations en direct.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
   <!-- BARRE DE NAVIGATION (STYLE RAP CLASH SCHOOL "RCS" DE LA MAQUETTE)         -->
   <!-- ========================================================================= -->
-  <header x-data="{ mobileMenu: false }" class="bg-[#0D0D18]/95 backdrop-blur-md border-b border-[#24243D] sticky top-0 z-50">
+  <header x-data="{ mobileMenu: false }" class="bg-[#0D0D1A]/95 backdrop-blur-md border-b border-[#2A2A48] sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
 
@@ -187,12 +223,12 @@
             <div class="font-clash font-bold text-xl tracking-wider text-white flex items-center gap-1.5">
               RAP CLASH <span class="text-rcs-orange">SCHOOL</span>
             </div>
-            <div class="text-[10px] text-gray-400 font-medium tracking-widest uppercase">Édition Côte d'Ivoire</div>
+            <div class="text-[11px] text-slate-300 font-medium tracking-widest uppercase">Édition Côte d'Ivoire</div>
           </div>
         </a>
 
-        <!-- Liens de navigation centraux -->
-        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-300">
+        <!-- Liens de navigation centraux (lisibilité rehaussée) -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-200">
           <a href="{% url 'home' %}" class="hover:text-rcs-orange transition-colors">Accueil</a>
           <a href="{% url 'candidats' %}" class="hover:text-rcs-orange transition-colors">Candidats</a>
           <a href="{% url 'duels' %}" class="hover:text-rcs-orange transition-colors flex items-center gap-1.5">
@@ -205,7 +241,7 @@
 
         <!-- Actions droites : Espace Candidat & Inscription / Connexion -->
         <div class="hidden md:flex items-center gap-3">
-          <a href="{% url 'espace_candidat' %}" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-200 border border-rcs-border hover:border-rcs-cyan hover:text-rcs-cyan transition-colors">
+          <a href="{% url 'espace_candidat' %}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-200 border border-rcs-border hover:border-rcs-cyan hover:text-rcs-cyan transition-colors">
             Mon Espace (Upload Médias)
           </a>
           <a href="{% url 'connexion' %}" class="btn-clash-orange text-xs">
@@ -214,7 +250,7 @@
         </div>
 
         <!-- Bouton menu mobile -->
-        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-gray-400 hover:text-white">
+        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-slate-300 hover:text-white">
           <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           <svg x-show="mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -222,12 +258,12 @@
 
       <!-- Menu Mobile -->
       <div x-show="mobileMenu" x-transition class="md:hidden py-4 border-t border-rcs-border space-y-2">
-        <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md font-semibold text-gray-300 hover:bg-rcs-card hover:text-rcs-orange">Accueil</a>
-        <a href="{% url 'candidats' %}" class="block px-3 py-2 rounded-md font-semibold text-gray-300 hover:bg-rcs-card hover:text-rcs-orange">Candidats</a>
-        <a href="{% url 'duels' %}" class="block px-3 py-2 rounded-md font-semibold text-gray-300 hover:bg-rcs-card hover:text-rcs-orange">Clash Live</a>
-        <a href="{% url 'classement' %}" class="block px-3 py-2 rounded-md font-semibold text-gray-300 hover:bg-rcs-card hover:text-rcs-gold">Leaderboard (Classement)</a>
+        <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md font-semibold text-slate-200 hover:bg-rcs-card hover:text-rcs-orange">Accueil</a>
+        <a href="{% url 'candidats' %}" class="block px-3 py-2 rounded-md font-semibold text-slate-200 hover:bg-rcs-card hover:text-rcs-orange">Candidats</a>
+        <a href="{% url 'duels' %}" class="block px-3 py-2 rounded-md font-semibold text-slate-200 hover:bg-rcs-card hover:text-rcs-orange">Clash Live</a>
+        <a href="{% url 'classement' %}" class="block px-3 py-2 rounded-md font-semibold text-slate-200 hover:bg-rcs-card hover:text-rcs-gold">Leaderboard (Classement)</a>
         <div class="pt-3 border-t border-rcs-border flex flex-col gap-2">
-          <a href="{% url 'espace_candidat' %}" class="px-4 py-2.5 rounded-xl text-center text-xs font-bold text-gray-200 border border-rcs-border">Mon Espace Candidat</a>
+          <a href="{% url 'espace_candidat' %}" class="px-4 py-2.5 rounded-xl text-center text-xs font-bold text-slate-200 border border-rcs-border">Mon Espace Candidat</a>
           <a href="{% url 'connexion' %}" class="btn-clash-orange text-center text-xs">Connexion</a>
         </div>
       </div>
@@ -242,10 +278,36 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- PIED DE PAGE RAP CLASH SCHOOL                                             -->
+  <!-- PIED DE PAGE RAP CLASH SCHOOL + LIEN WHATSAPP OFFICIEL                    -->
   <!-- ========================================================================= -->
-  <footer class="bg-[#07070E] border-t border-rcs-border mt-20">
+  <footer class="bg-[#080812] border-t border-rcs-border mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- Bandeau WhatsApp spécial communauté & assistance -->
+      <div class="mb-12 p-6 rounded-2xl bg-gradient-to-r from-[#121224] via-[#161B28] to-[#121224] border border-[#23352B] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center shrink-0 text-[#25D366]">
+            <!-- Icône WhatsApp -->
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.184 1.564 5.939l-1.564 5.717 5.864-1.538c1.691.923 3.636 1.455 5.706 1.455 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12zm0 22c-1.848 0-3.568-.518-5.034-1.413l-.361-.219-3.743.982.999-3.649-.24-.382c-.984-1.568-1.504-3.393-1.504-5.319 0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-clash font-bold text-white text-base">Rejoignez-nous sur WhatsApp</h4>
+            <p class="text-xs text-slate-300 mt-0.5">Assistance directe, informations en temps réel et coulisses des clashs inter-écoles.</p>
+          </div>
+        </div>
+        <a
+          href="{{ whatsapp_url|default:'https://wa.me/2250757333078' }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-whatsapp text-xs self-start sm:self-auto shrink-0"
+        >
+          <span>Ouvrir WhatsApp</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 
         <!-- Présentation -->
@@ -254,56 +316,56 @@
             <span class="px-2 py-1 rounded bg-rcs-orange font-clash font-black text-sm text-white">RCS</span>
             <span class="font-clash font-bold text-lg text-white">RAP CLASH SCHOOL</span>
           </div>
-          <p class="text-xs text-gray-400 leading-relaxed mb-4">
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
             La plus grande arène de clash de rap inter-établissements en Côte d'Ivoire. Chaque candidat défend son école en photo, vidéo et audio.
           </p>
-          <!-- Paiements partenaires comme sur l'affiche -->
-          <div class="text-[11px] font-semibold text-gray-500 mb-2 uppercase tracking-wider">Vote Pass & Paiements autorisés :</div>
+          <!-- Paiements partenaires -->
+          <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Vote Pass & Paiements autorisés :</div>
           <div class="flex items-center gap-2">
-            <span class="px-2 py-1 rounded bg-[#1D3557] text-[#00E5FF] text-[10px] font-bold">Wave CI</span>
-            <span class="px-2 py-1 rounded bg-[#2A0845] text-[#FFC107] text-[10px] font-bold">Djamo</span>
-            <span class="px-2 py-1 rounded bg-[#FF6B00]/20 text-[#FF6B00] text-[10px] font-bold">Orange Money</span>
+            <span class="px-2.5 py-1 rounded bg-[#1D3557] text-[#00E5FF] text-[11px] font-bold border border-[#00E5FF]/30">Wave CI</span>
+            <span class="px-2.5 py-1 rounded bg-[#2A0845] text-[#FFC107] text-[11px] font-bold border border-[#FFC107]/30">Djamo</span>
+            <span class="px-2.5 py-1 rounded bg-[#FF6B00]/20 text-[#FF6B00] text-[11px] font-bold border border-[#FF6B00]/30">Orange Money</span>
           </div>
         </div>
 
         <!-- Navigation -->
         <div>
           <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4 font-clash">Navigation</h3>
-          <ul class="space-y-2 text-xs text-gray-400">
-            <li><a href="{% url 'home' %}" class="hover:text-rcs-orange">Accueil RCS</a></li>
-            <li><a href="{% url 'candidats' %}" class="hover:text-rcs-orange">Tous les Rappeurs</a></li>
-            <li><a href="{% url 'duels' %}" class="hover:text-rcs-orange">Clash Live Stream</a></li>
-            <li><a href="{% url 'classement' %}" class="hover:text-rcs-gold">Leaderboard des Champions</a></li>
-            <li><a href="{% url 'inscription' %}" class="hover:text-rcs-orange">Rejoindre la compétition</a></li>
+          <ul class="space-y-2.5 text-xs text-slate-300">
+            <li><a href="{% url 'home' %}" class="hover:text-rcs-orange transition-colors">Accueil RCS</a></li>
+            <li><a href="{% url 'candidats' %}" class="hover:text-rcs-orange transition-colors">Tous les Rappeurs</a></li>
+            <li><a href="{% url 'duels' %}" class="hover:text-rcs-orange transition-colors">Clash Live Stream</a></li>
+            <li><a href="{% url 'classement' %}" class="hover:text-rcs-gold transition-colors">Leaderboard des Champions</a></li>
+            <li><a href="{% url 'inscription' %}" class="hover:text-rcs-orange transition-colors">Rejoindre la compétition</a></li>
           </ul>
         </div>
 
         <!-- Établissements & Catégories -->
         <div>
           <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4 font-clash">Arènes Scolaires</h3>
-          <ul class="space-y-2 text-xs text-gray-400">
-            <li><span class="text-gray-300 font-semibold">Collèges :</span> Plateau, CEG Yopougon...</li>
-            <li><span class="text-gray-300 font-semibold">Lycées :</span> Classique d'Abidjan, Cocody, Attécoubé...</li>
-            <li><span class="text-gray-300 font-semibold">Universités :</span> UFHB Cocody, UNA Abobo, INP-HB...</li>
-            <li class="pt-2 text-[11px] text-rcs-cyan">Abidjan · Yamoussoukro · Côte d'Ivoire</li>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li><span class="text-white font-semibold">Collèges :</span> Plateau, CEG Yopougon...</li>
+            <li><span class="text-white font-semibold">Lycées :</span> Classique d'Abidjan, Cocody, Attécoubé...</li>
+            <li><span class="text-white font-semibold">Universités :</span> UFHB Cocody, UNA Abobo, INP-HB...</li>
+            <li class="pt-2 text-[11px] text-rcs-cyan font-medium">Abidjan · Yamoussoukro · Côte d'Ivoire</li>
           </ul>
         </div>
 
         <!-- Contact & Admin -->
         <div>
           <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4 font-clash">Organisation RCS</h3>
-          <p class="text-xs text-gray-400 mb-2">Comité National RAP CLASH SCHOOL</p>
-          <p class="text-xs text-gray-400 mb-4">Courriel : contact@rapclashschool.ci</p>
-          <a href="{% url 'admin_dashboard' %}" class="inline-block px-3 py-1.5 rounded-lg bg-rcs-card border border-rcs-border text-xs text-gray-300 hover:border-rcs-orange hover:text-rcs-orange transition-colors">
+          <p class="text-xs text-slate-300 mb-1">Comité National RAP CLASH SCHOOL</p>
+          <p class="text-xs text-slate-300 mb-3">Courriel : <span class="text-white font-medium">rap.ivoire.ecole@gmail.com</span></p>
+          <a href="{% url 'admin_dashboard' %}" class="inline-block px-3 py-1.5 rounded-lg bg-rcs-card border border-rcs-border text-xs text-slate-200 hover:border-rcs-orange hover:text-rcs-orange transition-colors">
             Accès Administration →
           </a>
         </div>
 
       </div>
 
-      <div class="border-t border-rcs-border mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+      <div class="border-t border-rcs-border mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>© 2026 RAP CLASH SCHOOL (RCS) · Tous droits réservés.</p>
-        <p class="text-[11px] text-gray-400">Plateforme officielle avec photos réelles, lecteurs audio & vidéos de clash.</p>
+        <p class="text-[11px] text-slate-300">Plateforme officielle avec photos réelles, lecteurs audio & vidéos de clash.</p>
       </div>
     </div>
   </footer>

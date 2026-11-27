@@ -2,50 +2,126 @@
 
 {% block admin_content %}
 <!--
-  Journal de contrôle des votes pour l'équipe d'organisation.
-  Permet de vérifier la provenance, le type et l'horodatage des voix.
+  Journal de contrôle et de validation des votes par l'administration.
+  Vérification du numéro de téléphone Wave et de l'heure du paiement,
+  avec validation et expédition automatique de courriel Brevo.
 -->
 <div class="space-y-6">
 
-  <div class="carte-blanche p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <!-- En-tête -->
+  <div class="carte-admin p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h1 class="text-xl font-bold text-gray-900">Journal d'audit des votes</h1>
-      <p class="text-xs text-gray-600 mt-1">
-        Historique des voix enregistrées par commune et par électeur.
+      <h1 class="text-xl font-bold text-slate-100">Contrôle & Validation des Votes Wave</h1>
+      <p class="text-xs text-slate-400 mt-1">
+        Pointez les transactions Wave à 500 FCFA avec le numéro et l'heure, puis validez pour notifier le votant via Brevo.
       </p>
     </div>
     <div class="text-right">
-      <span class="text-xs text-gray-500 block">Total général</span>
-      <span class="text-xl font-extrabold text-ci-700">{{ stats.total_votes }} suffrages</span>
+      <span class="text-xs text-slate-400 block">Suffrages validés</span>
+      <span class="text-xl font-extrabold text-emerald-400">{{ stats.total_votes }} voix</span>
     </div>
   </div>
 
-  <div class="carte-blanche bg-white overflow-hidden">
+  <!-- Message de succès après validation -->
+  {% if message_succes %}
+  <div class="p-4 rounded-xl bg-emerald-950/80 border border-emerald-600 flex items-start gap-3 text-emerald-200 text-xs shadow-lg">
+    <svg class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <div class="font-medium leading-relaxed">
+      {{ message_succes }}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Tableau des votes -->
+  <div class="carte-admin overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-700/60 flex items-center justify-between">
+      <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">
+        Registre des demandes de vote
+      </h2>
+      <span class="text-[11px] text-slate-400">
+        Expéditeur Brevo : <strong class="text-slate-200">rap.ivoire.ecole@gmail.com</strong>
+      </span>
+    </div>
+
     <div class="overflow-x-auto">
       <table class="w-full text-left text-xs">
-        <thead class="bg-gray-50 text-gray-600 uppercase border-b border-gray-200">
+        <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
           <tr>
-            <th class="px-6 py-3 font-semibold">Identifiant</th>
-            <th class="px-6 py-3 font-semibold">Candidat soutenu</th>
-            <th class="px-6 py-3 font-semibold">Mode de vote</th>
-            <th class="px-6 py-3 font-semibold">Commune</th>
-            <th class="px-6 py-3 font-semibold text-right">Horodatage</th>
+            <th class="px-5 py-3 font-semibold">ID / Date & Heure</th>
+            <th class="px-5 py-3 font-semibold">Votant & Contact</th>
+            <th class="px-5 py-3 font-semibold">Numéro Wave (+225)</th>
+            <th class="px-5 py-3 font-semibold">Candidat soutenu</th>
+            <th class="px-5 py-3 font-semibold text-center">Montant & Voix</th>
+            <th class="px-5 py-3 font-semibold text-center">Statut</th>
+            <th class="px-5 py-3 font-semibold text-right">Action Admin</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-slate-700/50">
           {% for v in votes %}
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-3 font-mono text-gray-500 text-[11px]">#{{ v.id }}</td>
-            <td class="px-6 py-3 font-bold text-gray-900">{{ v.candidat }}</td>
-            <td class="px-6 py-3">
-              {% if v.type == 'gratuit' %}
-              <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">Vote quotidien gratuit</span>
+          <tr class="hover:bg-slate-750/50 transition-colors {% if v.statut == 'en_attente' %}bg-amber-950/10{% endif %}">
+            <td class="px-5 py-4">
+              <span class="font-mono font-bold text-slate-200 text-xs">#{{ v.id }}</span>
+              <span class="block text-[11px] text-slate-400 mt-0.5">{{ v.date_heure }}</span>
+            </td>
+            <td class="px-5 py-4">
+              <div class="font-bold text-slate-100">{{ v.votant_nom }}</div>
+              <div class="text-[11px] text-slate-400 font-mono">{{ v.votant_email }}</div>
+            </td>
+            <td class="px-5 py-4 font-mono font-bold text-emerald-400">
+              📱 {{ v.votant_telephone }}
+              <span class="block text-[10px] font-normal text-slate-400">Wave CI</span>
+            </td>
+            <td class="px-5 py-4 font-bold text-slate-100">
+              {{ v.candidat_nom }}
+            </td>
+            <td class="px-5 py-4 text-center">
+              <span class="font-extrabold text-amber-400">{{ v.montant }} FCFA</span>
+              <span class="block text-[10px] font-bold text-emerald-400">+{{ v.voix }} voix</span>
+            </td>
+            <td class="px-5 py-4 text-center">
+              {% if v.statut == 'valide' %}
+              <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-800/60 inline-flex items-center gap-1">
+                <span>✓ Validé</span>
+              </span>
+              {% if v.email_envoye %}
+              <span class="block text-[9px] text-slate-400 mt-1">📧 Brevo envoyé</span>
+              {% endif %}
               {% else %}
-              <span class="px-2 py-0.5 rounded bg-ci-50 text-ci-800 border border-ci-200 font-semibold">Pack d'encouragement</span>
+              <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-amber-950/70 text-amber-300 border border-amber-800/60 inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span>En attente Wave</span>
+              </span>
               {% endif %}
             </td>
-            <td class="px-6 py-3 text-gray-700">{{ v.commune }}</td>
-            <td class="px-6 py-3 text-right text-gray-500 text-[11px]">{{ v.date }}</td>
+            <td class="px-5 py-4 text-right">
+              {% if v.statut == 'en_attente' %}
+              <a
+                href="{% url 'admin_valider_vote' v.id %}"
+                onclick="return confirm('Confirmez-vous la réception du paiement Wave de {{ v.montant }} FCFA pour {{ v.votant_nom }} ? Le vote sera validé et un email Brevo sera expédié.');"
+                class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-900 bg-emerald-400 hover:bg-emerald-300 active:bg-emerald-500 shadow-sm transition-all inline-flex items-center gap-1"
+              >
+                <span>✓ Valider & Email</span>
+              </a>
+              {% else %}
+              <span class="text-xs text-slate-500 font-medium">Traité le {{ v.date_validation }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="px-6 py-12 text-center text-slate-400 text-xs">
+              <div class="max-w-md mx-auto space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-400 mb-2">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="font-bold text-slate-200">Aucun vote soumis pour le moment.</p>
+                <p class="text-slate-400">
+                  Dès qu'un internaute effectuera un paiement Wave de 500 FCFA et confirmera son numéro, sa demande apparaîtra ici avec son heure pour vérification.
+                </p>
+              </div>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

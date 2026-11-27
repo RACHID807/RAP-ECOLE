@@ -5,17 +5,20 @@ Les vues transmettent les données de la base (actuellement vides)
 et gèrent proprement les cas où aucun candidat ou duel n'est encore enregistré.
 """
 
-from django.shortcuts import render
+from functools import wraps
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import Http404
+from django.contrib import messages
 from .data import (
     CATEGORIES, ETABLISSEMENTS, CANDIDATS, DUELS, VOTES_PACKAGES,
-    ANNONCES, STATS_GENERALES, PHASES,
+    ANNONCES, STATS_GENERALES, PHASES, WAVE_PAY_URL, MESSAGE_DEFILANT, WHATSAPP_URL,
+    VOTES, TRANSACTIONS,
     get_candidat_by_id, get_duel_by_id, enrich_candidat,
     get_all_candidats_enriched, get_all_duels_enriched,
+    ajouter_vote, valider_vote_admin, get_all_votes, get_vote_by_id,
 )
-
-# Liste des transactions réelles (initialement vide)
-TRANSACTIONS = []
+from .brevo_service import envoyer_confirmation_vote_brevo
 
 # ---------------------------------------------------------------------------
 # 1. PAGES PUBLIQUES
@@ -101,29 +104,64 @@ def duel_detail(request, pk):
 
 
 def vote_page(request, candidat_id):
-    """Espace de vote pour un candidat sélectionné."""
+    """
+    Espace de vote pour un candidat sélectionné.
+    Gère la sélection du pack Wave à 500 FCFA, la saisie des coordonnées de paiement,
+    et la transmission du vote en attente de vérification administrative.
+    """
     candidat_brut = get_candidat_by_id(candidat_id)
     if not candidat_brut:
-        # Si aucun candidat n'existe encore, on prépare un profil modèle vide
         candidat = {
             'id': candidat_id,
-            'nom_artistique': 'En attente d\'inscription',
+            'nom_artistique': f"Candidat #{candidat_id}",
             'prenom': '',
             'nom': '',
             'votes': 0,
             'photo_url': '',
-            'audio_titre': 'Aucun extrait déposé',
+            'audio_titre': 'Extrait en cours de traitement',
             'audio_url': '',
-            'etablissement': {'nom': 'Établissement à définir'},
-            'commune': '',
+            'etablissement': {'nom': 'Établissement scolaire / universitaire'},
+            'commune': 'Abidjan',
             'ville': 'Côte d\'Ivoire',
         }
     else:
         candidat = enrich_candidat(candidat_brut)
 
+    vote_enregistre = None
+    erreur_vote = None
+
+    if request.method == 'POST':
+        votant_nom = request.POST.get('votant_nom', '').strip()
+        votant_email = request.POST.get('votant_email', '').strip()
+        votant_telephone = request.POST.get('votant_telephone', '').strip()
+        package_id = request.POST.get('package_id', 'pass_solo')
+
+        # Trouver le pack choisi
+        pack_choisi = next((p for p in VOTES_PACKAGES if p['id'] == package_id), VOTES_PACKAGES[0])
+        montant = pack_choisi['prix']
+        voix = pack_choisi['votes']
+
+        if not votant_telephone:
+            erreur_vote = "Veuillez indiquer le numéro de téléphone utilisé pour le paiement Wave."
+        elif not votant_email:
+            erreur_vote = "Veuillez renseigner votre adresse courriel pour recevoir la confirmation Brevo."
+        else:
+            vote_enregistre = ajouter_vote(
+                votant_nom=votant_nom or "Supporter anonyme",
+                votant_email=votant_email,
+                votant_telephone=votant_telephone,
+                candidat_id=candidat_id,
+                montant=montant,
+                nb_voix=voix,
+                methode='Wave CI'
+            )
+
     contexte = {
         'candidat': candidat,
         'vote_packages': VOTES_PACKAGES,
+        'wave_pay_url': WAVE_PAY_URL,
+        'vote_enregistre': vote_enregistre,
+        'erreur_vote': erreur_vote,
     }
     return render(request, 'vote/index.html', contexte)
 
@@ -238,10 +276,65 @@ def candidat_notifications(request):
     return render(request, 'espace_candidat/notifications.html', contexte)
 
 
+# Mot de passe secret pour l'accès au panneau d'administration
+ADMIN_PASSWORD = 'adminrap_ec@le'
+
+
+def admin_required(view_func):
+    """
+    Décorateur de sécurité pour l'espace administration.
+    Vérifie si la session en cours a validé le mot de passe 'adminrap_ec@le'.
+    Redirige vers l'écran de connexion admin si non authentifié.
+    """
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.session.get('admin_logged_in'):
+            return redirect(f"{reverse('admin_login')}?next={request.path}")
+        return view_func(request, *args, **kwargs)
+    return _wrapped
+
+
 # ---------------------------------------------------------------------------
-# 3. PANNEAU ADMIN
+# 3. PANNEAU ADMIN (ACCÈS SÉCURISÉ)
 # ---------------------------------------------------------------------------
 
+def admin_login(request):
+    """
+    Page d'authentification pour le comité d'organisation.
+    Vérifie la conformité du mot de passe 'adminrap_ec@le'.
+    """
+    # Si déjà connecté, rediriger directement vers le dashboard
+    if request.session.get('admin_logged_in'):
+        return redirect('admin_dashboard')
+
+    erreur = None
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('admin_dashboard')
+
+    if request.method == 'POST':
+        mot_de_passe = request.POST.get('mot_de_passe', '').strip()
+        if mot_de_passe == ADMIN_PASSWORD:
+            request.session['admin_logged_in'] = True
+            return redirect(next_url)
+        else:
+            erreur = "Mot de passe administrateur incorrect. Veuillez vérifier votre saisie."
+
+    contexte = {
+        'erreur': erreur,
+        'next_url': next_url,
+    }
+    return render(request, 'admin_panel/login.html', contexte)
+
+
+def admin_logout(request):
+    """
+    Déconnexion sécurisée de la session administrateur.
+    """
+    if 'admin_logged_in' in request.session:
+        del request.session['admin_logged_in']
+    return redirect('admin_login')
+
+
+@admin_required
 def admin_dashboard(request):
     """Vue d'ensemble de l'administration."""
     contexte = {
@@ -256,6 +349,7 @@ def admin_dashboard(request):
     return render(request, 'admin_panel/dashboard.html', contexte)
 
 
+@admin_required
 def admin_candidats(request):
     """Gestion des candidats."""
     contexte = {
@@ -267,16 +361,56 @@ def admin_candidats(request):
     return render(request, 'admin_panel/candidats.html', contexte)
 
 
+@admin_required
 def admin_votes(request):
-    """Journal des votes."""
+    """
+    Journal de contrôle et de validation des votes par l'administration.
+    Permet de vérifier le numéro Wave et l'heure exacte du paiement
+    avant de valider le vote et d'envoyer l'email Brevo.
+    """
+    message_succes = request.GET.get('succes')
     contexte = {
-        'votes': [],
+        'votes': get_all_votes(),
         'stats': STATS_GENERALES,
+        'message_succes': message_succes,
         'active_page': 'votes',
     }
     return render(request, 'admin_panel/votes.html', contexte)
 
 
+@admin_required
+def admin_valider_vote(request, vote_id):
+    """
+    Action administrateur : validation d'un vote après pointage du paiement Wave.
+    Incrémente les voix du candidat, met à jour les transactions et envoie
+    automatiquement le courriel de confirmation au votant via Brevo.
+    """
+    vote = get_vote_by_id(vote_id)
+    if not vote:
+        raise Http404("Vote introuvable.")
+
+    succes, msg = valider_vote_admin(vote_id)
+
+    if succes:
+        # Envoi de la notification courriel via Brevo
+        email_ok, email_msg = envoyer_confirmation_vote_brevo(
+            votant_nom=vote.get('votant_nom'),
+            votant_email=vote.get('votant_email'),
+            candidat_nom=vote.get('candidat_nom'),
+            nb_voix=vote.get('voix', 1),
+            montant=vote.get('montant', 500),
+            telephone=vote.get('votant_telephone'),
+        )
+        vote['email_envoye'] = email_ok
+        vote['email_msg'] = email_msg
+        texte_retour = f"Le vote #{vote_id} de {vote.get('votant_nom')} (+{vote.get('voix')} voix) a été validé ! {email_msg}"
+    else:
+        texte_retour = msg
+
+    return redirect(f"{reverse('admin_votes')}?succes={texte_retour}")
+
+
+@admin_required
 def admin_duels(request):
     """Gestion des duels."""
     contexte = {
@@ -288,6 +422,7 @@ def admin_duels(request):
     return render(request, 'admin_panel/duels.html', contexte)
 
 
+@admin_required
 def admin_transactions(request):
     """Suivi financier."""
     contexte = {
@@ -299,6 +434,7 @@ def admin_transactions(request):
     return render(request, 'admin_panel/transactions.html', contexte)
 
 
+@admin_required
 def admin_annonces(request):
     """Gestion des annonces."""
     contexte = {
@@ -308,6 +444,7 @@ def admin_annonces(request):
     return render(request, 'admin_panel/annonces.html', contexte)
 
 
+@admin_required
 def admin_parametres(request):
     """Paramètres généraux."""
     contexte = {

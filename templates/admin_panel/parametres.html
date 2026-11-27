@@ -1,57 +1,134 @@
 {% extends 'admin_panel/base_admin.html' %}
-{% block admin_page_title %}Paramètres{% endblock %}
+
 {% block admin_content %}
-<div class="max-w-2xl space-y-6">
-  <div class="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/40 text-yellow-400 text-xs mb-4">⚠️ SIMULATION — Paramètres non fonctionnels. Backend à connecter.</div>
+<!--
+  Paramètres généraux de l'arène et des phases de compétition.
+  Palette ardoise douce reposante pour les yeux.
+-->
+<div class="max-w-3xl space-y-6" x-data="{
+  voteGratuit: true,
+  votePayant: true,
+  sauvegarder() {
+    alert('Paramètres enregistrés dans l\'interface administrative.');
+  }
+}">
 
-  <div class="card p-6">
-    <h3 class="font-display font-bold text-white mb-4">🏆 Paramètres de la compétition</h3>
-    <div class="space-y-4">
-      <div><label class="text-gray-300 text-sm mb-1 block">Nom de la compétition</label><input type="text" value="RAP ÉCOLE 2026" class="input"/></div>
-      <div><label class="text-gray-300 text-sm mb-1 block">Slogan</label><input type="text" value="Le championnat de rap inter-établissements" class="input"/></div>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-gray-300 text-sm mb-1 block">Date de début</label><input type="date" value="2026-10-01" class="input"/></div>
-        <div><label class="text-gray-300 text-sm mb-1 block">Date de fin</label><input type="date" value="2026-11-25" class="input"/></div>
-      </div>
+  <div class="carte-admin p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-bold text-slate-100">Paramètres de la compétition</h1>
+      <p class="text-xs text-slate-400 mt-1">
+        Configuration globale du championnat inter-scolaire RAP ÉCOLE.
+      </p>
     </div>
+    <button
+      type="button"
+      @click="sauvegarder()"
+      class="py-2 px-4 rounded-xl font-semibold text-xs text-slate-900 bg-emerald-400 hover:bg-emerald-300 transition-colors shadow-sm self-start sm:self-auto"
+    >
+      Enregistrer les modifications
+    </button>
   </div>
 
-  <div class="card p-6">
-    <h3 class="font-display font-bold text-white mb-4">🗳️ Paramètres de vote</h3>
-    <div class="space-y-4">
-      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
-        <div><div class="text-white font-medium text-sm">Vote gratuit actif</div><div class="text-gray-400 text-xs">Autoriser les votes gratuits</div></div>
-        <div x-data="{on:true}" @click="on=!on" :class="on ? 'bg-brand-600' : 'bg-dark-500'" class="w-11 h-6 rounded-full relative cursor-pointer transition-colors">
-          <div :class="on ? 'translate-x-5' : 'translate-x-0'" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></div>
-        </div>
+  <!-- Identité de la compétition -->
+  <div class="carte-admin p-6 space-y-4">
+    <h3 class="font-bold text-slate-200 text-sm border-b border-slate-700/60 pb-3 flex items-center gap-2">
+      <span>🏆 Informations générales</span>
+    </h3>
+    <div class="space-y-4 text-xs">
+      <div>
+        <label class="block text-slate-300 font-semibold mb-1.5">Intitulé officiel</label>
+        <input
+          type="text"
+          value="RAP ÉCOLE 2026 — Édition Côte d'Ivoire"
+          class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+        />
       </div>
-      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
-        <div><div class="text-white font-medium text-sm">Vote premium actif</div><div class="text-gray-400 text-xs">Autoriser les votes payants</div></div>
-        <div x-data="{on:true}" @click="on=!on" :class="on ? 'bg-brand-600' : 'bg-dark-500'" class="w-11 h-6 rounded-full relative cursor-pointer transition-colors">
-          <div :class="on ? 'translate-x-5' : 'translate-x-0'" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></div>
-        </div>
+      <div>
+        <label class="block text-slate-300 font-semibold mb-1.5">Slogan officiel</label>
+        <input
+          type="text"
+          value="Le championnat de rap et de clash inter-établissements de Côte d'Ivoire"
+          class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+        />
       </div>
-    </div>
-  </div>
-
-  <div class="card p-6">
-    <h3 class="font-display font-bold text-white mb-4">📅 Phases de compétition</h3>
-    <div class="space-y-2">
-      {% for phase in phases %}
-      <div class="flex items-center justify-between p-3 rounded-xl bg-dark-600">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <div class="text-white font-medium text-sm">{{ phase.nom }}</div>
-          <div class="text-gray-500 text-xs">{{ phase.date }}</div>
+          <label class="block text-slate-300 font-semibold mb-1.5">Date d'ouverture</label>
+          <input
+            type="date"
+            value="2026-10-01"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          />
         </div>
-        <span class="badge text-xs {% if phase.statut == 'en_cours' %}bg-brand-900/50 border-brand-700/50 text-brand-400{% elif phase.statut == 'termine' %}bg-green-900/40 border-green-700/50 text-green-400{% else %}bg-dark-500 border-dark-400 text-gray-500{% endif %}">
-          {% if phase.statut == 'en_cours' %}▶ En cours{% elif phase.statut == 'termine' %}✓ Terminée{% else %}À venir{% endif %}
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1.5">Grande Finale</label>
+          <input
+            type="date"
+            value="2026-11-25"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contrôle des suffrages -->
+  <div class="carte-admin p-6 space-y-4">
+    <h3 class="font-bold text-slate-200 text-sm border-b border-slate-700/60 pb-3 flex items-center gap-2">
+      <span>🗳️ Règles des suffrages</span>
+    </h3>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/60 text-xs">
+        <div>
+          <div class="text-slate-100 font-semibold">Vote quotidien gratuit (1 voix / jour / utilisateur)</div>
+          <div class="text-slate-400 text-[11px]">Permet à chaque élève de soutenir son école gratuitement</div>
+        </div>
+        <button
+          type="button"
+          @click="voteGratuit = !voteGratuit"
+          :class="voteGratuit ? 'bg-emerald-500' : 'bg-slate-700'"
+          class="w-12 h-6 rounded-full relative cursor-pointer transition-colors shrink-0"
+        >
+          <span :class="voteGratuit ? 'translate-x-6' : 'translate-x-1'" class="absolute top-1 left-0 w-4 h-4 rounded-full bg-white shadow transition-transform"></span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/60 text-xs">
+        <div>
+          <div class="text-slate-100 font-semibold">Packs de votes payants (Mobile Money)</div>
+          <div class="text-slate-400 text-[11px]">Autoriser les votes par Wave CI, Djamo et Orange Money</div>
+        </div>
+        <button
+          type="button"
+          @click="votePayant = !votePayant"
+          :class="votePayant ? 'bg-emerald-500' : 'bg-slate-700'"
+          class="w-12 h-6 rounded-full relative cursor-pointer transition-colors shrink-0"
+        >
+          <span :class="votePayant ? 'translate-x-6' : 'translate-x-1'" class="absolute top-1 left-0 w-4 h-4 rounded-full bg-white shadow transition-transform"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phases de la compétition -->
+  <div class="carte-admin p-6 space-y-4">
+    <h3 class="font-bold text-slate-200 text-sm border-b border-slate-700/60 pb-3 flex items-center gap-2">
+      <span>📅 Étapes du tournoi</span>
+    </h3>
+    <div class="space-y-2.5">
+      {% for phase in phases %}
+      <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/60 text-xs">
+        <div>
+          <div class="text-slate-100 font-semibold">{{ phase.nom }}</div>
+          <div class="text-slate-400 text-[11px]">{{ phase.date }}</div>
+        </div>
+        <span class="px-2.5 py-1 rounded-md text-[10px] font-semibold {% if phase.statut == 'en_cours' %}bg-emerald-950/70 text-emerald-300 border border-emerald-800/60{% elif phase.statut == 'termine' %}bg-slate-800 text-slate-400 border border-slate-700{% else %}bg-slate-850 text-slate-400 border border-slate-800{% endif %}">
+          {% if phase.statut == 'en_cours' %}Active{% elif phase.statut == 'termine' %}Terminée{% else %}À venir{% endif %}
         </span>
       </div>
       {% endfor %}
     </div>
   </div>
 
-  <button onclick="alert('Paramètres enregistrés [SIMULATION]')" class="btn-primary">💾 Enregistrer les paramètres [DÉMO]</button>
 </div>
 {% endblock %}
-

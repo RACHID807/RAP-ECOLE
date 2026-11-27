@@ -1,74 +1,165 @@
-{% extends 'base.html' %}
-{% block title %}Administration — RAP ÉCOLE (Côte d'Ivoire){% endblock %}
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Administration — RAP ÉCOLE Côte d'Ivoire{% endblock %}</title>
 
-{% block content %}
-<!--
-  Gabarit de base du panneau d'administration des organisateurs.
-  Style professionnel blanc & vert, navigation sobre.
--->
-<div class="bg-gray-50 min-h-screen py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js pour l'interactivité dynamique -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+  <!-- Typographies Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /*
+      Thème Ardoise Douce (Soft Slate / Sage)
+      Spécialement calibré pour reposer les yeux des organisateurs lors de longues sessions.
+      Évite le blanc pur éblouissant et le noir agressif.
+    */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a; /* Slate 900 feutré */
+      color: #cbd5e1;            /* Slate 300 adouci */
+      overflow-x: hidden;
+    }
+    .carte-admin {
+      background-color: #1e293b; /* Slate 800 */
+      border: 1px solid #334155; /* Slate 700 doux */
+      border-radius: 0.875rem;
+    }
+    /* Défilement discret */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- ========================================================================= -->
+  <!-- BARRE SUPÉRIEURE DE NAVIGATION ADMIN (REPOSANTE POUR LES YEUX)           -->
+  <!-- ========================================================================= -->
+  <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo & Titre Admin -->
+        <div class="flex items-center gap-3">
+          <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 font-bold text-sm shadow-sm">
+              RÉ
+            </div>
+            <div>
+              <div class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                Administration <span class="text-xs px-2 py-0.5 rounded-md bg-emerald-950/70 text-emerald-400 border border-emerald-800/60 font-medium">Comité</span>
+              </div>
+              <div class="text-[11px] text-slate-400">RAP ÉCOLE · Côte d'Ivoire 2026</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Statut & Actions de droite -->
+        <div class="flex items-center gap-4 text-xs">
+          <!-- Indicateur d'état connecté -->
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Session sécurisée active</span>
+          </div>
+
+          <!-- Lien vers le portail public -->
+          <a href="{% url 'home' %}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-slate-100 border border-slate-700 transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span class="hidden md:inline">Voir le portail public</span>
+          </a>
+
+          <!-- Bouton de Déconnexion -->
+          <a href="{% url 'admin_logout' %}" class="px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 border border-rose-800/50 transition-colors flex items-center gap-1.5 font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span>Déconnexion</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- CORPS PRINCIPAL AVEC BARRE LATÉRALE REPOSANTE                            -->
+  <!-- ========================================================================= -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
 
       <!-- Navigation latérale d'administration -->
-      <aside class="carte-blanche p-5 bg-white space-y-1">
-        <div class="pb-4 mb-4 border-b border-gray-100">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-ci-800 bg-ci-50 px-2 py-0.5 rounded border border-ci-200">
-            Comité d'Organisation
+      <aside class="carte-admin p-5 space-y-1">
+        <div class="pb-4 mb-4 border-b border-slate-700/60">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-800/60 inline-block">
+            Menu Organisateur
           </span>
-          <h2 class="text-base font-bold text-gray-900 mt-2">Panneau de gestion</h2>
-          <p class="text-xs text-gray-500">Administration RAP ÉCOLE CI</p>
+          <h2 class="text-sm font-bold text-slate-100 mt-2.5">Modules de gestion</h2>
+          <p class="text-xs text-slate-400">RAP ÉCOLE Côte d'Ivoire</p>
         </div>
 
-        <nav class="space-y-1 text-xs font-semibold">
+        <nav class="space-y-1.5 text-xs font-medium">
           <a
             href="{% url 'admin_dashboard' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'dashboard' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'dashboard' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Vue d'ensemble
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span>Vue d'ensemble</span>
           </a>
           <a
             href="{% url 'admin_candidats' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'candidats' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'candidats' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Gestion des candidats
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <span>Gestion des candidats</span>
           </a>
           <a
             href="{% url 'admin_votes' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'votes' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'votes' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Journal des votes
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Journal des votes</span>
           </a>
           <a
             href="{% url 'admin_duels' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'duels' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'duels' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Programmation des duels
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Programmation des duels</span>
           </a>
           <a
             href="{% url 'admin_transactions' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'transactions' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'transactions' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Contributions & Mobile Money
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Contributions Mobile Money</span>
           </a>
           <a
             href="{% url 'admin_annonces' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'annonces' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'annonces' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Communiqués officiels
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            <span>Communiqués officiels</span>
           </a>
           <a
             href="{% url 'admin_parametres' %}"
-            class="block px-3 py-2.5 rounded-md transition-colors {% if active_page == 'parametres' %}bg-ci-700 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'parametres' %}bg-emerald-600/90 text-white font-semibold shadow-sm{% else %}text-slate-300 hover:bg-slate-700/60 hover:text-slate-100{% endif %}"
           >
-            Paramètres du championnat
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>Paramètres de l'arène</span>
           </a>
         </nav>
 
-        <div class="pt-4 mt-4 border-t border-gray-100 text-xs">
-          <a href="{% url 'home' %}" class="text-ci-700 hover:underline block">
-            ← Revenir au portail public
+        <div class="pt-4 mt-4 border-t border-slate-700/60 text-xs">
+          <a href="{% url 'home' %}" class="text-emerald-400 hover:text-emerald-300 hover:underline block flex items-center gap-1.5">
+            <span>← Revenir au portail public</span>
           </a>
         </div>
       </aside>
@@ -79,7 +170,13 @@
       </section>
 
     </div>
-
   </div>
-</div>
-{% endblock %}
+
+  <!-- Pied de page discret admin -->
+  <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+    Administration RAP ÉCOLE · Palette Ardoise reposante · Session protégée
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
